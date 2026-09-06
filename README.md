@@ -27,9 +27,6 @@ That command:
 
 Optional: `OLLAMA_BASE_URL` (default `http://127.0.0.1:11434`) for a local Ollama provider.
 
-- https://www.youtube.com/watch?v=BM39OouLNsM
-- https://github.com/entbappy/Multi-Agent-System-using-LangGraph-MCP-Supervisor-Guardrails-HITL
-
 ## Table of contents
 
 - [Request flow](#request-flow)
@@ -46,7 +43,7 @@ Optional: `OLLAMA_BASE_URL` (default `http://127.0.0.1:11434`) for a local Ollam
 
 ## Request flow
 
-What runs **today**. The UI sends `agentic_adapter` (default `langgraph`). The graph still returns without calling supervisor or Groq. Those next-step diagrams are in [Docs/Design/TravelReqAgentImpl.md](Docs/Design/TravelReqAgentImpl.md).
+What runs **today**. The UI sends `agentic_adapter` (default `langgraph`). The planner graph routes the request, calls the selected specialists, and returns a draft for review. More diagrams are in [Docs/Design/TravelReqAgentImpl.md](Docs/Design/TravelReqAgentImpl.md).
 
 ### 1. User to app.py to the planner service
 
