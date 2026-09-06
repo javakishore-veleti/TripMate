@@ -1,10 +1,107 @@
-# Your Travel Portal (YTP)
+# Your Next Travel
 
-Your Travel Portal (YTP) is a self-run travel portal to plan trips with local or cloud LLM models you control. Run YTP on your laptop or on AWS, Azure, GCP, or another cloud you own. You keep the keys and the data. A planning and research site you run or host on your own.
+<p align="center">
+  <img src="Docs/images/your-next-travel-banner.png" alt="Your Next Travel — a travel portal you run. Your keys. Your data. Your next trip." width="100%">
+</p>
 
-The product name is **Your Next Travel**. FastAPI is the API. The Angular portal lives in `portals/your-next-travel-app`.
+**Your Travel Portal (YTP)** is the project. **Your Next Travel** is the product you open in the browser.
 
-This is software you run. Clone the repo or use a container image. The project authors do not host your data.
+It is a travel portal **you** run. Watch the cities you care about, read what is happening nearby, and draft a trip you can review before you go. The project authors do not host your account. Your places, preference packs, drafts, and keys stay on your laptop or on a cloud you own.
+
+## Table of contents
+
+- [The idea](#the-idea)
+- [Who it is for](#who-it-is-for)
+- [What you can do](#what-you-can-do)
+  - [Watch the places that matter](#watch-the-places-that-matter)
+  - [Say how you like to travel](#say-how-you-like-to-travel)
+  - [See what is on nearby](#see-what-is-on-nearby)
+  - [Draft a trip and review it](#draft-a-trip-and-review-it)
+  - [Keep the privacy you care about](#keep-the-privacy-you-care-about)
+- [How to use it](#how-to-use-it)
+- [Local development](#local-development)
+- [Request flow](#request-flow)
+  - [1. User to the API to the planner service](#1-user-to-the-api-to-the-planner-service)
+  - [2. Planner service to TravelRequestAgentImpl](#2-planner-service-to-travelrequestagentimpl)
+- [Where code lives](#where-code-lives)
+- [Understanding Python Frameworks](#understanding-python-frameworks)
+  - [Uvicorn Usage](#uvicorn-usage)
+    - [How Uvicorn integrates with FastAPI](#how-uvicorn-integrates-with-fastapi)
+    - [How Uvicorn finds the app object](#how-uvicorn-finds-the-app-object)
+    - [What ASGI stands for and why it matters](#what-asgi-stands-for-and-why-it-matters)
+    - [What came before ASGI](#what-came-before-asgi)
+    - [ASGI servers and alternatives](#asgi-servers-and-alternatives)
+    - [Compared to Tomcat and WebLogic](#compared-to-tomcat-and-weblogic)
+
+## The idea
+
+<p align="center">
+  <img src="Docs/images/your-next-travel-vision.png" alt="Planning the next trip at home — a week outline, a circled city, and the street you might walk." width="100%">
+</p>
+
+Most travel sites keep your searches, your saved places, and the models that write the plan. Your Next Travel is the opposite: a planning desk that lives with you.
+
+- **Places you watch** — up to five cities and how far you will travel from each
+- **Briefs that plan** — what kind of month it is, what is on nearby, and a trip draft you can sit with
+- **Privacy you keep** — your account, drafts, and keys never go to a hosted Your Next Travel service, because there is not one
+
+You open the portal, tell it where you look, and it helps you see the next trip. You approve the draft, ask for a change, or delete the plan. Nothing leaves the machine you chose unless you send it.
+
+## Who it is for
+
+Travelers who want a private planning space. Families who keep a short list of cities they return to. Anyone who would rather review a draft at the kitchen table than hand a trip to a site they do not run.
+
+If you can start the app on your computer (or on a small cloud box you own), you can use it. You do not need an account with the project authors.
+
+## What you can do
+
+### Watch the places that matter
+
+On **Account → Places**, add up to five cities and a radius. Those are the places the portal watches. Briefs and drafts stay grounded in that list instead of inventing a destination you never asked for.
+
+### Say how you like to travel
+
+Preference packs describe who you are on the road: a beach week, a budget trip, a city break, traveling with family, going solo. You pick a few. The briefs and the trip draft read those packs so the tone matches how you actually travel.
+
+### See what is on nearby
+
+The journal and places views look at the cities you watch:
+
+- **What kind of month?** — a short read on the season and the mood of the places you listed
+- **What’s on nearby?** — happenings in your radius for the week, month, or quarter
+- **Think the trip through** — a deeper pass when you want more than a skim
+
+You stay in the cities you already care about. The portal does not send you a catalog of the whole world.
+
+### Draft a trip and review it
+
+When you are ready, you write what you want — a long weekend, a rail trip, a quiet week by water — and ask for a draft.
+
+The portal gathers air, stays, climate, and cost notes, then writes an itinerary you can read. You can:
+
+1. **Approve** the draft and keep it
+2. **Send feedback** and ask it to try again
+3. **Delete** a plan when you are done (it asks you to type a confirmation phrase)
+
+You stay in the loop. The draft is a starting point, not a booking you cannot undo.
+
+### Keep the privacy you care about
+
+On **Account** you can see when you last signed in, choose how briefs are written, and delete your account. Preference files and the local database live under `runtime-data/local-deploy/` on the machine you run. They are not in this git repository and not on a shared Your Next Travel host.
+
+Run it at home, or on AWS, Azure, GCP, or another cloud **you** own. You keep the keys.
+
+## How to use it
+
+1. Start the portal on your machine (`npm run local:app-run` — details below).
+2. Open **http://127.0.0.1:4200** and create your account.
+3. Add the cities you watch and a radius. Save places.
+4. Pick preference packs that sound like you.
+5. Open the journal or places view and read what is nearby.
+6. Ask for a trip draft. Read it. Approve it, comment, or delete it.
+7. When you want a clean slate, delete the plan or the account from Account → Privacy.
+
+That is the whole traveler loop. The rest of this README is for people who run or change the software.
 
 ## Local development
 
@@ -27,21 +124,6 @@ That command:
 - Local data: `runtime-data/local-deploy/` (SQLite and preference packs; created on this machine, not in git)
 
 Optional: `OLLAMA_BASE_URL` (default `http://127.0.0.1:11434`) for a local Ollama provider.
-
-## Table of contents
-
-- [Request flow](#request-flow)
-  - [1. User to the API to the planner service](#1-user-to-the-api-to-the-planner-service)
-  - [2. Planner service to TravelRequestAgentImpl](#2-planner-service-to-travelrequestagentimpl)
-- [Where code lives](#where-code-lives)
-- [Understanding Python Frameworks](#understanding-python-frameworks)
-  - [Uvicorn Usage](#uvicorn-usage)
-    - [How Uvicorn integrates with FastAPI](#how-uvicorn-integrates-with-fastapi)
-    - [How Uvicorn finds the app object](#how-uvicorn-finds-the-app-object)
-    - [What ASGI stands for and why it matters](#what-asgi-stands-for-and-why-it-matters)
-    - [What came before ASGI](#what-came-before-asgi)
-    - [ASGI servers and alternatives](#asgi-servers-and-alternatives)
-    - [Compared to Tomcat and WebLogic](#compared-to-tomcat-and-weblogic)
 
 ## Request flow
 
