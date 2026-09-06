@@ -147,14 +147,17 @@ activemq-data/
 # SageMath parsed files
 *.sage.py
 
-# Local SQLite databases and preference skill files
+# Traveler data created at runtime — keep the folders, not the files
 data/travel-skills/
 data/*.db
 data/*.db-journal
 data/*.db-wal
 data/*.db-shm
-runtime-data/local-deploy/*
-!runtime-data/local-deploy/.gitkeep
+runtime-data/**/*.db
+runtime-data/**/*.db-journal
+runtime-data/**/*.db-wal
+runtime-data/**/*.db-shm
+runtime-data/local-deploy/travel-skills/*/
 
 # Local retired-repo git backup (do not publish)
 .git-old-backup/

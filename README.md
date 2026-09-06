@@ -24,6 +24,7 @@ That command:
 - API: `http://127.0.0.1:8000`
 - Portal: `http://127.0.0.1:4200`
 - Schema-only: `npm run local:schema-setup`
+- Local data: `runtime-data/local-deploy/` (SQLite and preference packs; created on this machine, not in git)
 
 Optional: `OLLAMA_BASE_URL` (default `http://127.0.0.1:11434`) for a local Ollama provider.
 
