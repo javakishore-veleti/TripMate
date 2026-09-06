@@ -52,10 +52,25 @@ The models stay the ones you picked. The graph only decides who speaks next.
 
 The portal and your account are not agents. They store places, packs, and drafts, then call the graph when you ask.
 
+## What agentic pipelines are in this product
+
+YNTPL does not run one long chat. It runs a few short pipelines. Each pipeline is a path of jobs for one kind of ask. You start it. It walks the path. Then it shows you the result.
+
+There are three today:
+
+1. **Draft a trip** — your ask, then air, stays, weather, and cost, then a week you review.
+2. **What’s on nearby** — the cities you watch, then the month’s mood, then happenings in your radius.
+3. **Places briefs** — this week, this month, or this quarter, then a short read of those same cities.
+
+<p align="center">
+  <img src="Docs/Assets/yntpl-agentic-pipelines.png" alt="Three YNTPL pipelines: draft a trip, what’s on nearby, and places briefs." width="100%">
+</p>
+
 ## Table of contents
 
 - [Why an Agentic Travel Planner](#why-an-agentic-travel-planner)
 - [What is agentic in this product](#what-is-agentic-in-this-product)
+- [What agentic pipelines are in this product](#what-agentic-pipelines-are-in-this-product)
 - [The idea](#the-idea)
 - [Who it is for](#who-it-is-for)
 - [What you can do](#what-you-can-do)
