@@ -1,0 +1,76 @@
+<section class="hero-section">
+  <p class="kicker">Privacy</p>
+  <h1>This copy runs on your machine — or your cloud.</h1>
+  <p>
+    Your Next Travel is software you download (GitHub or a container image) and
+    run yourself. The authors do not host your account, prompts, or API keys.
+  </p>
+</section>
+
+<section class="legal-page">
+  <article>
+    <h2>Who holds the data</h2>
+    <p>
+      Whatever this instance stores stays in the database and files you
+      configured (SQLite under <code>data/</code> by default, or your own
+      Postgres). If you run it only on a laptop, that is local. If you deploy
+      the same image on your cloud, that host is yours. We do not receive a
+      copy.
+    </p>
+  </article>
+  <article>
+    <h2>What this instance can store</h2>
+    <p>
+      Explore does not require an account. If you sign up here, this instance
+      keeps email, display name, a password hash, traveler preferences, session
+      or JWT records, and the prompts and plans you generate. Access logs on
+      your machine or cloud may include an IP address.
+    </p>
+  </article>
+  <article>
+    <h2>Your keys, not ours</h2>
+    <p>
+      Cloud model keys, optional flight-data keys, and similar secrets belong
+      to you. You put them on the machine you run (environment variables, or a
+      Settings vault locked with a passphrase you remember). The authors never
+      see those keys. If you forget a vault passphrase, encrypted secrets are
+      gone; base settings (provider, model, local Ollama URL) stay, and you
+      enter new keys.
+    </p>
+  </article>
+  <article>
+    <h2>Who else may see a prompt</h2>
+    <p>
+      If you pick a cloud model host (for example Groq), that provider receives
+      the prompt and any preference text this instance sends. A local Ollama
+      model stays on the machine you pointed at. Destination photos load from
+      Unsplash. Optional live flight APIs receive the route you search. Each
+      of those services has its own terms.
+    </p>
+  </article>
+  <article>
+    <h2>If you put this on a public URL</h2>
+    <p>
+      You become the operator of that URL. Privacy law (including GDPR) can
+      apply to <em>you</em> if other people create accounts there. This page is
+      not legal advice and does not make a public deploy compliant.
+    </p>
+  </article>
+  <article>
+    <h2>Your choices on this instance</h2>
+    <p>
+      Edit preferences, sign out, delete the account in this database, or wipe
+      the data directory / database volume. Deleting an account here does not
+      erase prompts already sent to a model or flight provider.
+    </p>
+    <p>
+      This is a learning project, not a travel agency. Do not put health,
+      payment cards, or government ID into prompts or notes.
+    </p>
+  </article>
+  <p class="legal-page-nav">
+    <a routerLink="/">Back to Explore</a>
+    <a routerLink="/account">Account</a>
+    <span>© {{ year }} Your Next Travel</span>
+  </p>
+</section>

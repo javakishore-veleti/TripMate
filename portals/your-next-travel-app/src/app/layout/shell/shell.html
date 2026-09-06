@@ -1,0 +1,48 @@
+<div class="site">
+  <app-brand-bar />
+  <main class="app-container">
+    <router-outlet />
+  </main>
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <div class="site-footer-top">
+        <div class="site-footer-brand">
+          <img src="/brand-logo.png" width="40" height="40" alt="" />
+          <div>
+            <strong>Your Next Travel</strong>
+            <p>Your Travel Portal — you run it, you hold the keys.</p>
+          </div>
+        </div>
+        <nav class="site-footer-nav" aria-label="Footer">
+          <a routerLink="/">Explore</a>
+          <a routerLink="/plan">Plan a trip</a>
+          <a routerLink="/dashboard">Dashboard</a>
+          <a routerLink="/trip-journal">Trip journal</a>
+          <a routerLink="/privacy">Privacy</a>
+          <a routerLink="/signin">Sign in</a>
+        </nav>
+      </div>
+      <div class="site-footer-legal">
+        <p>
+          Your Next Travel is an Agentic AI learning project you run yourself
+          (clone or container). It is not a hosted travel agency, booking site,
+          or advice service. The authors do not operate your instance and do
+          not receive your accounts or keys.
+        </p>
+        <p>
+          Plans, prices, weather, flights, and stays are for education. They
+          are estimates unless you connect your own provider keys. Photos are
+          illustrative. Do not rely on this instance for real bookings or
+          payments.
+        </p>
+        <p>
+          You run this copy at your own risk. No warranty is made about
+          accuracy or availability. The authors are not responsible for cost,
+          delay, injury, or other loss from using or trusting what this
+          software produces.
+        </p>
+      </div>
+      <p class="site-footer-copy">© {{ year }} Your Next Travel. All rights reserved.</p>
+    </div>
+  </footer>
+</div>

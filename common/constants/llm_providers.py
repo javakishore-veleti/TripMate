@@ -1,0 +1,2 @@
+LLM_PROVIDER_GROQ = "groq"
+LLM_PROVIDER_OLLAMA = "ollama"

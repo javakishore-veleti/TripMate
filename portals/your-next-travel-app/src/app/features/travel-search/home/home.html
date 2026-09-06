@@ -1,0 +1,82 @@
+<section class="hero-panel page-hero">
+  @if (auth.signedIn()) {
+    <p class="kicker">Welcome back, {{ firstName() }} · {{ placeCount() }} places</p>
+    <h1>Where to next?</h1>
+    <p class="lede">
+      Pick a place that feels right. We’ll sketch the days from your trip
+      prompt and any preference packs you have switched on.
+    </p>
+    <div class="hero-actions">
+      <a class="btn-accent" href="#destinations">Browse places</a>
+      <a class="btn-navy" routerLink="/plan">Plan a trip</a>
+    </div>
+    @if (packs().length) {
+      <div class="home-packs">
+        @for (pack of packs(); track pack.id) {
+          <span class="agent-chip">{{ pack.name }}</span>
+        }
+        <a class="home-packs-edit" routerLink="/preferences">Change packs</a>
+      </div>
+    }
+  } @else {
+    <p class="kicker">Your travel portal · {{ placeCount() }} places</p>
+    <h1>Your Next Travel. Your portal.</h1>
+    <p class="lede">
+      Browse by mood, pick a place, then plan on this instance — your laptop or
+      your cloud, your models and keys. Sign in only when you are ready to save
+      a trip.
+    </p>
+    <div class="hero-actions">
+      <a class="btn-accent" href="#destinations">Start exploring</a>
+      <a class="btn-navy" routerLink="/signin">Sign in</a>
+    </div>
+  }
+</section>
+
+<section id="destinations" class="accordion-list">
+  @for (group of groups; track group.id) {
+    <article class="accordion" [class.is-open]="isOpen(group.id)">
+      <button type="button" class="accordion-trigger" (click)="toggle(group.id)">
+        <span class="accordion-emoji" aria-hidden="true">{{ group.emoji }}</span>
+        <span class="accordion-copy">
+          <strong>{{ group.title }}</strong>
+          <small>{{ group.subtitle }} · {{ group.places.length }} places</small>
+        </span>
+        <span class="accordion-chevron" aria-hidden="true">{{ isOpen(group.id) ? '−' : '+' }}</span>
+      </button>
+      @if (isOpen(group.id)) {
+        <div class="place-grid">
+          @for (place of group.places; track place.name) {
+            <button
+              type="button"
+              class="place-card"
+              [class.is-selected]="selected()?.name === place.name"
+              (click)="choose(place)"
+            >
+              <img [src]="place.image" [alt]="place.name + ', ' + place.country" loading="lazy" />
+              <span class="place-caption">
+                <strong>{{ place.name }}</strong>
+                <em>{{ place.country }}</em>
+                <small>{{ place.vibe }}</small>
+              </span>
+            </button>
+          }
+        </div>
+      }
+    </article>
+  }
+</section>
+
+@if (selected(); as place) {
+  <aside class="pick-bar">
+    <img [src]="place.image" [alt]="" />
+    <div>
+      <p class="kicker">Your pick</p>
+      <h2>{{ place.name }}, {{ place.country }}</h2>
+      <p>{{ place.vibe }}</p>
+    </div>
+    <button type="button" class="btn-accent" (click)="planSelected()">
+      {{ auth.signedIn() ? 'Plan this trip' : 'Sign in to plan this' }}
+    </button>
+  </aside>
+}

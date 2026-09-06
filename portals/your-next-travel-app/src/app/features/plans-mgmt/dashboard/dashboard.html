@@ -1,0 +1,128 @@
+<section class="hero-panel page-hero">
+  <p class="kicker">Dashboard · {{ windowLabel() }}</p>
+  <h1>What’s on around your places</h1>
+  <p class="lede">
+    @if (placeLine()) {
+      {{ placeLine() }} · within {{ radius() }} miles.
+    } @else {
+      Add up to five cities on your account, then ask what’s on.
+    }
+    A brief for {{ firstName() }}, not a ticket feed.
+  </p>
+  <div class="horizon-tabs" role="tablist" aria-label="Time window">
+    <button type="button" [class.is-on]="horizon() === 'week'" (click)="setHorizon('week')" [disabled]="asking()">This week</button>
+    <button type="button" [class.is-on]="horizon() === 'month'" (click)="setHorizon('month')" [disabled]="asking()">This month</button>
+    <button type="button" [class.is-on]="horizon() === 'quarter'" (click)="setHorizon('quarter')" [disabled]="asking()">This quarter</button>
+  </div>
+</section>
+
+@if (leftover(); as item) {
+  <aside class="continue-bar">
+    <img [src]="item.story.image" [alt]="" />
+    <div>
+      <p class="kicker">Continue where you left off</p>
+      <h2>{{ item.story.title }}</h2>
+      <p>{{ item.story.line || item.story.status }} · {{ item.story.when }}</p>
+    </div>
+    <a class="btn-accent" [routerLink]="item.story.href">{{ item.story.cta }}</a>
+  </aside>
+}
+
+<section class="moment-block">
+  <p class="kicker">{{ windowNote() || windowLabel() }}</p>
+  <h2 class="moment-heading">Popular events near your places</h2>
+  @if (!places().length) {
+    <section class="planner-card">
+      <p>The brief needs cities, not a street address. Add them on your account, then ask this week, month, or quarter.</p>
+      <div class="pref-actions">
+        <a class="primary-link" routerLink="/account">Add places</a>
+      </div>
+    </section>
+  } @else if (asking()) {
+    <section class="planner-card"><p>Looking around your places…</p></section>
+  } @else if (askError()) {
+    <p class="auth-error">{{ askError() }}</p>
+  } @else if (cards().length) {
+    <section class="moment-grid">
+      @for (event of cards(); track event.name + event.near) {
+        <article class="moment-card">
+          <img [src]="event.image" [alt]="event.name" />
+          <div class="moment-copy">
+            <div class="moment-top">
+              <span class="status-chip">{{ event.kindLabel }}</span>
+              <span class="request-when">{{ event.miles_from ? event.miles_from + ' mi' : event.near }}</span>
+            </div>
+            <h3>{{ event.name }}</h3>
+            <p>{{ event.blurb }}</p>
+            <small>
+              {{ eventWhere(event) }}
+              @if (event.when) {
+                · {{ event.when }}
+              }
+              · near {{ event.near }}
+            </small>
+            <button type="button" class="secondary-link" (click)="planEvent(event)">Plan around this</button>
+          </div>
+        </article>
+      }
+    </section>
+  } @else {
+    <section class="planner-card">
+      <p>Choose this week, this month, or this quarter.</p>
+    </section>
+  }
+</section>
+
+<section class="accordion-list">
+  <article class="accordion" [class.is-open]="planningOpen()">
+    <button type="button" class="accordion-trigger" (click)="togglePlanning()">
+      <span class="accordion-emoji" aria-hidden="true">✈️</span>
+      <span class="accordion-copy">
+        <strong>Places you’ve started planning</strong>
+        <small>
+          @if (loading()) {
+            Looking up your drafts…
+          } @else if (trips().length) {
+            {{ trips().length }} in the journal
+          } @else {
+            No drafts yet
+          }
+        </small>
+      </span>
+      <span class="accordion-chevron" aria-hidden="true">{{ planningOpen() ? '−' : '+' }}</span>
+    </button>
+    @if (planningOpen()) {
+      @if (trips().length) {
+        <section class="trip-grid journal-pad">
+          @for (item of trips(); track item.record.thread_id) {
+            <a class="trip-tile" [routerLink]="item.story.href">
+              <img class="trip-tile-photo" [src]="item.story.image" [alt]="item.story.title" />
+              <div class="trip-tile-shade"></div>
+              <div class="trip-tile-top">
+                <span class="status-chip" [class]="'status-' + item.record.status">{{ item.story.status }}</span>
+                @if (item.story.when) {
+                  <span class="trip-tile-when">{{ item.story.when }}</span>
+                }
+              </div>
+              <div class="trip-tile-body">
+                <p class="kicker">{{ item.story.country || 'Your trip' }}</p>
+                <h2>{{ item.story.title }}</h2>
+                @if (item.story.line) {
+                  <p>{{ item.story.line }}</p>
+                }
+                <span class="trip-tile-cta">{{ item.story.cta }} →</span>
+              </div>
+            </a>
+          }
+        </section>
+        <p class="journal-more">
+          <a routerLink="/trip-journal">Open the full trip journal →</a>
+        </p>
+      } @else if (!loading()) {
+        <p class="journal-pad">
+          Start on <a routerLink="/">Explore</a> and the draft will land here.
+        </p>
+      }
+    }
+  </article>
+</section>

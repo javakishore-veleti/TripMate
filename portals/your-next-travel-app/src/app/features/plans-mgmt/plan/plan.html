@@ -1,0 +1,124 @@
+<section class="page-hero">
+  <p class="kicker">Your next trip</p>
+  <h1>Tell us the trip. We’ll sketch the days.</h1>
+  <p>
+    Flights, stays, weather, budget, then a draft you can approve.
+    Your saved traveler preferences fill in the blanks.
+  </p>
+</section>
+
+<section class="planner-card">
+  <div class="card-header">
+    <div>
+      <h2>Where do you want to go?</h2>
+      <p>Try: a week in Japan from Dhaka, mid-range, under 2 lakh.</p>
+    </div>
+    <div class="status-pill"><span class="status-dot"></span> Ready</div>
+  </div>
+
+  <details class="planner-advanced">
+    <summary>Planning options</summary>
+    <div class="planner-options">
+      <label class="adapter-field">
+        <span>Planner</span>
+        <select [(ngModel)]="adapter">
+          <option value="langgraph">Default</option>
+          <option value="google_adk">Google ADK</option>
+          <option value="aws_strands">AWS Strands</option>
+        </select>
+      </label>
+      <label class="adapter-field">
+        <span>Model host</span>
+        <select [(ngModel)]="providerId" (ngModelChange)="onProviderChange()">
+          @for (provider of providers(); track provider.id) {
+            <option [value]="provider.id">{{ provider.label }}</option>
+          }
+        </select>
+      </label>
+      <label class="adapter-field adapter-field-wide">
+        <span>Model</span>
+        <select [(ngModel)]="modelId">
+          @for (model of models(); track model.id) {
+            <option [value]="model.id">{{ model.label }}</option>
+          }
+        </select>
+      </label>
+      @if (isOllama()) {
+        <label class="adapter-field adapter-field-wide">
+          <span>Local model URL</span>
+          <input type="url" [(ngModel)]="ollamaUrl" (change)="onOllamaUrlChange()" placeholder="http://127.0.0.1:11434" />
+        </label>
+      }
+    </div>
+    @if (isOllama()) {
+      <p class="ollama-hint">Using a model on this machine. Change the URL if it lives elsewhere.</p>
+    }
+  </details>
+
+  <div class="input-area">
+    <textarea [(ngModel)]="message" placeholder="Plan a complete 7 days Japan trip including flights, hotels and sightseeing under 2 lakhs..."></textarea>
+    <button class="send-btn" type="button" [disabled]="loading()" (click)="send()">
+      @if (loading()) {
+        <span class="loader"></span>
+      } @else {
+        Generate Draft
+      }
+    </button>
+  </div>
+
+  <div class="quick-prompts">
+    <button type="button" (click)="setPrompt('Plan a complete 7 days Japan trip from Bangladesh including flights, hotels and sightseeing under 2 lakhs.')">Japan Trip</button>
+    <button type="button" (click)="setPrompt('Plan a 5 days Dubai trip from Dhaka with flights, hotels and sightseeing.')">Dubai Trip</button>
+    <button type="button" (click)="setPrompt('Plan a 7 days Thailand trip from Bangladesh with budget hotels and sightseeing.')">Thailand Trip</button>
+  </div>
+</section>
+
+@if (result(); as data) {
+  <section class="workflow-section">
+    <div class="workflow-header">
+      <div>
+        <span class="eyebrow">How this draft was built</span>
+        <h2>What we looked at</h2>
+      </div>
+      <span class="guardrail-badge" [class.blocked]="data.guardrail_allowed === false">
+        {{ data.guardrail_allowed === false ? 'Needs a clearer trip' : 'Ready to review' }}
+      </span>
+    </div>
+    <p class="supervisor-reasoning">{{ data.supervisor_reasoning || 'We picked the pieces this trip needs.' }}</p>
+    <div class="agent-chips">
+      @for (agent of data.selected_agents || []; track agent) {
+        <span class="agent-chip">{{ agentLabel(agent) }}</span>
+      }
+    </div>
+  </section>
+
+  <section class="result-section">
+    <div class="result-header">
+      <div>
+        <h2>{{ awaitingApproval() ? 'Your draft itinerary' : 'Your trip plan' }}</h2>
+        <p class="result-prompt">{{ prompt || 'No trip request recorded.' }}</p>
+      </div>
+      <div class="result-actions">
+        <button class="copy-btn" type="button" (click)="copy()">Copy plan</button>
+      </div>
+    </div>
+    <div class="result-box itinerary-doc" [innerHTML]="answerHtml()"></div>
+  </section>
+}
+
+@if (awaitingApproval()) {
+  <app-approval-panel
+    [message]="result()?.approval_request || ''"
+    [loading]="loading()"
+    [(feedback)]="feedback"
+    (decided)="submitApproval($event)"
+  />
+}
+
+@if (threadId) {
+  <app-delete-plan [threadId]="threadId" (deleted)="afterDeleted()" />
+}
+
+@if (error()) {
+  <section class="error-box">{{ error() }}</section>
+}

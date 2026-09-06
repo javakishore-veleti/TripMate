@@ -1,0 +1,76 @@
+<section class="hero-panel page-hero">
+  <p class="kicker">Trip journal</p>
+  <h1>Your trip stories</h1>
+  <p class="lede">
+    Drafts and finished plans live here — the places you already started,
+    not a ticket queue.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-accent" routerLink="/dashboard">Open dashboard</a>
+    <a class="btn-navy" routerLink="/plan">Plan a new trip</a>
+  </div>
+</section>
+
+<section class="accordion-list">
+  <article class="accordion" [class.is-open]="open()">
+    <button type="button" class="accordion-trigger" (click)="toggle()">
+      <span class="accordion-emoji" aria-hidden="true">🗺️</span>
+      <span class="accordion-copy">
+        <strong>Places you’ve started planning</strong>
+        <small>
+          @if (loading()) {
+            Opening your journal…
+          } @else if (trips().length === 1) {
+            1 trip in the journal
+          } @else if (trips().length) {
+            {{ trips().length }} trips in the journal
+          } @else {
+            Nothing packed yet
+          }
+        </small>
+      </span>
+      <span class="accordion-chevron" aria-hidden="true">{{ open() ? '−' : '+' }}</span>
+    </button>
+    @if (open()) {
+      @if (loading()) {
+        <p class="journal-pad">Gathering your trips…</p>
+      } @else if (trips().length) {
+        <section class="trip-grid journal-pad">
+          @for (item of trips(); track item.record.thread_id) {
+            <a class="trip-tile" [routerLink]="item.story.href">
+              <img class="trip-tile-photo" [src]="item.story.image" [alt]="item.story.title" />
+              <div class="trip-tile-shade"></div>
+              <div class="trip-tile-top">
+                <span class="status-chip" [class]="'status-' + item.record.status">{{ item.story.status }}</span>
+                @if (item.story.when) {
+                  <span class="trip-tile-when">{{ item.story.when }}</span>
+                }
+              </div>
+              <div class="trip-tile-body">
+                <p class="kicker">{{ item.story.country || 'Your trip' }}</p>
+                <h2>{{ item.story.title }}</h2>
+                @if (item.story.line) {
+                  <p>{{ item.story.line }}</p>
+                }
+                <span class="trip-tile-cta">{{ item.story.cta }} →</span>
+              </div>
+            </a>
+          }
+        </section>
+      } @else {
+        <section class="trip-empty journal-pad">
+          <img
+            src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1400&q=70"
+            alt=""
+          />
+          <div>
+            <p class="kicker">First page</p>
+            <h2>Browse a place. We’ll keep the story.</h2>
+            <p>Saved drafts show up in this journal.</p>
+            <a class="primary-link" routerLink="/">Find a destination</a>
+          </div>
+        </section>
+      }
+    }
+  </article>
+</section>

@@ -1,0 +1,66 @@
+<section class="hero-section">
+  <p class="kicker">Preferences</p>
+  <h1>Preference packs</h1>
+  <p>
+    Start with the built-in travel packs — no setup required. Tick up to
+    {{ maxSelected }} for searches and plans. Create your own or edit a
+    built-in pack; your copy is saved as a <code>SKILL.md</code> file on this
+    instance.
+  </p>
+</section>
+
+<section class="planner-card dashboard-actions">
+  <a class="primary-link" routerLink="/preferences/new">Create a preference</a>
+  <span class="request-meta">{{ selectedCount() }} of {{ maxSelected }} selected</span>
+</section>
+
+@if (loading()) {
+  <section class="planner-card"><p>Loading preference packs…</p></section>
+} @else if (skills().length) {
+  <section class="request-grid">
+    @for (skill of skills(); track skill.id) {
+      <article class="request-card">
+        <div class="request-card-top">
+          <label class="pref-select">
+            <input type="checkbox" [checked]="skill.selected" (click)="$event.preventDefault(); toggle(skill)" />
+            Use on plans
+          </label>
+          <span class="request-when">{{ skill.updated_at }}</span>
+        </div>
+        <h2>{{ skill.name }}</h2>
+        <p class="request-prompt">{{ skill.description || 'No description yet.' }}</p>
+        <p class="request-meta">
+          @if (skill.builtin && !skill.customized) {
+            Built-in · ready to use
+          } @else if (skill.customized) {
+            Your edit of a built-in pack · {{ skill.id }}/SKILL.md
+          } @else {
+            {{ skill.id }}/SKILL.md
+          }
+        </p>
+        <div class="pref-actions">
+          <a class="secondary-link" [routerLink]="['/preferences', skill.id]">
+            {{ skill.builtin && !skill.customized ? 'Customize' : 'Edit sections' }}
+          </a>
+          @if (!skill.builtin || skill.customized) {
+            <button type="button" class="danger-btn" (click)="remove(skill)">
+              {{ skill.customized ? 'Reset built-in' : 'Delete' }}
+            </button>
+          }
+        </div>
+      </article>
+    }
+  </section>
+} @else {
+  <section class="planner-card">
+    <h2>No preference packs yet</h2>
+    <p>Create one from the template. You type the words; we store them as markdown.</p>
+  </section>
+}
+
+@if (saved()) {
+  <p class="pref-saved">{{ saved() }}</p>
+}
+@if (error()) {
+  <section class="error-box">{{ error() }}</section>
+}

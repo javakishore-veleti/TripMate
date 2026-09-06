@@ -1,0 +1,53 @@
+<section class="hero-section">
+  <p class="kicker">{{ id ? 'Edit pack' : 'New pack' }}</p>
+  <h1>{{ id ? 'Edit preference' : 'Create a preference' }}</h1>
+  <p>
+    Built-in packs are ready as-is. If you change one, we save your copy as a
+    <code>SKILL.md</code> on this instance. Open one section at a time.
+  </p>
+</section>
+
+<section class="planner-card">
+  <form class="pref-form pref-skill-form" (ngSubmit)="submit()">
+    <label class="pref-wide">
+      <span>Name</span>
+      <input name="name" [(ngModel)]="name" placeholder="Family weekends" required />
+    </label>
+    <label class="pref-wide">
+      <span>Short description</span>
+      <input name="description" [(ngModel)]="description" placeholder="Easy trips with mixed ages" />
+    </label>
+
+    <div class="accordion-list pref-wide">
+      @for (section of sections; track section.key) {
+        <article class="accordion" [class.is-open]="isOpen(section.key)">
+          <button type="button" class="accordion-trigger" (click)="toggle(section.key)">
+            <span class="accordion-copy">
+              <strong>{{ section.title }}</strong>
+              <small>{{ section.hint }}</small>
+            </span>
+            <span class="accordion-chevron">{{ isOpen(section.key) ? '−' : '+' }}</span>
+          </button>
+          @if (isOpen(section.key)) {
+            <textarea
+              class="pref-section-input"
+              [name]="section.key"
+              [(ngModel)]="form[section.key]"
+              [placeholder]="section.hint"
+            ></textarea>
+          }
+        </article>
+      }
+    </div>
+
+    <div class="pref-actions pref-wide">
+      <button type="submit" [disabled]="saving()">
+        {{ saving() ? 'Saving…' : 'Save SKILL.md' }}
+      </button>
+      <a class="secondary-link" routerLink="/preferences">Back to list</a>
+    </div>
+  </form>
+  @if (error()) {
+    <p class="auth-error">{{ error() }}</p>
+  }
+</section>

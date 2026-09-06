@@ -1,0 +1,24 @@
+<section class="auth-card">
+  <p class="kicker">New here</p>
+  <h1>Create an account</h1>
+  <p>Keep travel requests, traveler preferences, and drafts in one place.</p>
+  <form class="auth-form" (ngSubmit)="submit()">
+    <label>
+      <span>Display name</span>
+      <input name="displayName" type="text" [(ngModel)]="displayName" autocomplete="name" />
+    </label>
+    <label>
+      <span>Email</span>
+      <input name="email" type="email" [(ngModel)]="email" autocomplete="email" required />
+    </label>
+    <label>
+      <span>Password</span>
+      <input name="password" type="password" [(ngModel)]="password" autocomplete="new-password" minlength="8" required />
+    </label>
+    <button class="btn-accent" type="submit">Create a free account</button>
+    @if (error()) {
+      <p class="auth-error">{{ error() }}</p>
+    }
+  </form>
+  <p class="auth-switch">Already have an account? <a routerLink="/signin">Sign in</a></p>
+</section>

@@ -1,0 +1,58 @@
+@if (record(); as item) {
+  <section class="hero-section">
+    <div class="badge">Saved request</div>
+    <h1>{{ item.status.replaceAll('_', ' ') }}</h1>
+    <p>Thread ID: {{ item.thread_id }}</p>
+  </section>
+
+  <section class="planner-card">
+    <h2>Prompt</h2>
+    <p class="result-prompt">{{ item.prompt }}</p>
+    <p class="request-meta">{{ item.llm_provider }} · {{ item.llm_model }} · {{ tokenLine() }}</p>
+  </section>
+
+  <section class="workflow-section">
+    <div class="workflow-header">
+      <div>
+        <span class="eyebrow">Supervisor Agent</span>
+        <h2>Execution Plan</h2>
+      </div>
+      <span class="guardrail-badge" [class.blocked]="item.result.guardrail_allowed === false">
+        {{ item.result.guardrail_allowed === false ? 'Guardrail blocked' : 'Guardrail passed' }}
+      </span>
+    </div>
+    <p class="supervisor-reasoning">{{ item.result.supervisor_reasoning || 'Supervisor routing completed.' }}</p>
+    <div class="agent-chips">
+      @for (agent of item.result.selected_agents || []; track agent) {
+        <span class="agent-chip">{{ agent }}</span>
+      }
+    </div>
+  </section>
+
+  <section class="result-section">
+    <div class="result-header">
+      <div>
+        <h2>{{ awaitingApproval() ? 'Draft Travel Plan' : 'Your Final AI Travel Plan' }}</h2>
+      </div>
+      <div class="result-actions">
+        <button class="copy-btn" type="button" (click)="copy()">Copy</button>
+      </div>
+    </div>
+    <div class="result-box" [innerHTML]="answerHtml()"></div>
+  </section>
+
+  @if (awaitingApproval()) {
+    <app-approval-panel
+      [message]="item.hitl.approval_request || item.result.approval_request || ''"
+      [loading]="loading()"
+      [(feedback)]="feedback"
+      (decided)="submitApproval($event)"
+    />
+  }
+
+  <app-delete-plan [threadId]="item.thread_id" (deleted)="afterDeleted()" />
+}
+
+@if (error()) {
+  <section class="error-box">{{ error() }}</section>
+}

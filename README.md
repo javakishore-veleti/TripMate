@@ -1,2 +1,230 @@
-# YourTravelPortal
-Your Travel Portal (YTP) - a self-run travel portal to plan trips with local or cloud LLM models you control. Run YTP on your laptop or on AWS, Azure, GCP, or another cloud you own. You keep the keys and the data. A planning and research site you run or host on your own. 
+# Your Travel Portal (YTP)
+
+Your Travel Portal (YTP) is a self-run travel portal to plan trips with local or cloud LLM models you control. Run YTP on your laptop or on AWS, Azure, GCP, or another cloud you own. You keep the keys and the data. A planning and research site you run or host on your own.
+
+The product name is **Your Next Travel**. FastAPI is the API. The Angular portal lives in `portals/your-next-travel-app`.
+
+This is software you run. Clone the repo or use a container image. The project authors do not host your data.
+
+## Local development
+
+Local only. One command is enough:
+
+```bash
+npm run local:app-run
+```
+
+That command:
+
+1. Activates this repo's `.venv` if your shell is not already using it
+2. Runs `uv sync`
+3. Starts FastAPI, which runs Alembic (Liquibase-style) `upgrade head` on every boot
+4. Starts the Angular portal after `/health` is ready
+
+- API: `http://127.0.0.1:8000`
+- Portal: `http://127.0.0.1:4200`
+- Schema-only: `npm run local:schema-setup`
+
+Optional: `OLLAMA_BASE_URL` (default `http://127.0.0.1:11434`) for a local Ollama provider.
+
+- https://www.youtube.com/watch?v=BM39OouLNsM
+- https://github.com/entbappy/Multi-Agent-System-using-LangGraph-MCP-Supervisor-Guardrails-HITL
+
+## Table of contents
+
+- [Request flow](#request-flow)
+  - [1. User to app.py to the planner service](#1-user-to-apppy-to-the-planner-service)
+  - [2. Planner service to TravelRequestAgentImpl](#2-planner-service-to-travelrequestagentimpl)
+- [Understanding Python Frameworks](#understanding-python-frameworks)
+  - [Uvicorn Usage](#uvicorn-usage)
+    - [How Uvicorn integrates with FastAPI](#how-uvicorn-integrates-with-fastapi)
+    - [How Uvicorn finds the app object](#how-uvicorn-finds-the-app-object)
+    - [What ASGI stands for and why it matters](#what-asgi-stands-for-and-why-it-matters)
+    - [What came before ASGI](#what-came-before-asgi)
+    - [ASGI servers and alternatives](#asgi-servers-and-alternatives)
+    - [Compared to Tomcat and WebLogic](#compared-to-tomcat-and-weblogic)
+
+## Request flow
+
+What runs **today**. The UI sends `agentic_adapter` (default `langgraph`). The graph still returns without calling supervisor or Groq. Those next-step diagrams are in [Docs/Design/TravelReqAgentImpl.md](Docs/Design/TravelReqAgentImpl.md).
+
+### 1. User to app.py to the planner service
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User
+    participant UI as Browser UI
+    participant App as app.py
+    participant Factory as ServicesObjectFactory
+    participant Svc as TravelPlannerService
+
+    User->>UI: Type prompt, Generate Draft
+    UI->>App: POST /api/v1/travel/planner
+    Note over UI,App: TravelRequest(message, thread_id, agentic_adapter)
+    App->>App: resolve_thread_id
+    App->>App: TravelReqCtx(thread_id)
+    App->>Factory: get_service(SERVICE_TRAVEL_PLANNER)
+    Factory-->>App: TravelPlannerServiceImpl
+    App->>Svc: execute(request, ctx)
+    Svc-->>App: ResponseCode
+    App->>App: result.prompt = ctx.user_message
+    App-->>UI: TravelResponse
+    UI-->>User: Your prompt + plan placeholder
+```
+
+### 2. Planner service to TravelRequestAgentImpl
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Svc as TravelPlannerServiceImpl
+    participant Agents as AgentsObjectFactory
+    participant Core as TravelRequestAgentImpl
+    participant Adapters as AgenticAdapterObjectFactory
+    participant Graph as TravelPlannerLangGraphAdapter
+
+    Svc->>Agents: get_agent(AGENT_TRAVEL_REQUEST)
+    Agents-->>Svc: TravelRequestAgentImpl
+    Svc->>Core: execute(request, ctx)
+    Core->>Core: ctx.user_message = request.message
+    Core->>Adapters: get_agentic_adapter(request.agentic_adapter)
+    Adapters-->>Core: TravelPlannerLangGraphAdapter
+    Core->>Graph: execute(request, ctx)
+    Graph-->>Core: SUCCESS
+    Core-->>Svc: SUCCESS or SKIP
+```
+
+More diagrams (supervisor, LLM provider): [Docs/Design/TravelReqAgentImpl.md](Docs/Design/TravelReqAgentImpl.md).
+
+## Understanding Python Frameworks
+
+FastAPI is the **application** (routes, validation, responses). Uvicorn is the **server** that listens on a host and port and calls that application. They meet through **ASGI**, a standard interface in Python web stacks.
+
+### Uvicorn Usage
+
+Your Next Travel starts the API from `app.py` with configurable host and port (defaults: `0.0.0.0` and `8000`):
+
+```bash
+python app.py
+python app.py --host 0.0.0.0 --port 9000
+```
+
+Or set `HOST` / `PORT` in the environment or a `.env` file. CLI flags override env. The equivalent Uvicorn CLI is:
+
+```bash
+uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+```
+
+#### How Uvicorn integrates with FastAPI
+
+Uvicorn and FastAPI are two layers.
+
+- **FastAPI is an ASGI app.** `app = FastAPI(...)` builds an object that implements `async def __call__(scope, receive, send)`. `@app.get` / `@app.post` only register routes on that object. FastAPI does **not** open a socket or listen on a port.
+- **Uvicorn is the ASGI server.** `uvicorn.run(...)` binds `host` / `port`, speaks HTTP, and for each request:
+  1. Parses the HTTP request into ASGI `scope` / `receive`
+  2. Calls `await app(scope, receive, send)`
+  3. FastAPI matches the path, runs your handler, builds a response
+  4. Uvicorn writes that response back to the client
+
+`if __name__ == "__main__"` means this only runs when you execute `python app.py`. Importing `app` (tests, or `uvicorn app:app` on the CLI) creates the FastAPI instance but does not start the server twice.
+
+#### How Uvicorn finds the app object
+
+Uvicorn does not scan the project for FastAPI classes. You point it at **one object** with an import path.
+
+In `app.py` that argument is `"app:app"`:
+
+| Part | Meaning in this repo |
+| --- | --- |
+| Left `app` | The **module** `app.py` |
+| Right `app` | The **variable** `app = FastAPI(...)` in that module |
+
+Uvicorn does the equivalent of:
+
+```python
+import importlib
+
+module = importlib.import_module("app")  # loads app.py
+asgi_app = getattr(module, "app")        # the FastAPI() instance
+```
+
+Then it only talks to that object. Other classes (`TravelPlannerService`, templates, and so on) are used only because your route functions call them.
+
+With `reload=True`, a parent process watches files. A **child** process imports `"app:app"` again after a change. That is why reload needs the string. Passing the in-memory `app` object works without reload, but the reloader cannot re-import it.
+
+If you renamed the instance (for example `api = FastAPI(...)`), you would pass `"app:api"`. If that path is missing or the object is not ASGI-callable, Uvicorn fails — it will not guess another object. The left side stays `app` because that is the **file/module** name, not the variable name.
+
+#### What ASGI stands for and why it matters
+
+**ASGI** is **Asynchronous Server Gateway Interface**. It is the contract between a web server (Uvicorn, Hypercorn, Daphne) and a Python web app (FastAPI, Starlette, Django). The server does not need FastAPI internals; the app does not need to know sockets. They agree on one callable:
+
+```python
+async def app(scope, receive, send):
+    ...
+```
+
+- `scope` — request metadata (path, method, headers, type `http` / `websocket` / `lifespan`)
+- `receive` — await incoming body / events
+- `send` — await outgoing response / events
+
+Python’s older web apps were mostly **sync**: one request occupies one thread or process until it finishes. Modern APIs wait a lot (LLM calls, HTTP, DB, WebSockets). ASGI lets the server **await** those without blocking the whole worker, so one process can handle many concurrent connections. It also standardizes HTTP, WebSockets, and startup/shutdown in one interface.
+
+#### What came before ASGI
+
+**WSGI** (Web Server Gateway Interface, PEP 333 / 3333, ~2003) is the synchronous predecessor:
+
+```python
+def app(environ, start_response):
+    start_response("200 OK", [("Content-Type", "text/plain")])
+    return [b"hello"]
+```
+
+Used by Flask, classic Django, and Pyramid. Served by Gunicorn, uWSGI, Waitress, and mod_wsgi.
+
+WSGI is request/response only, **synchronous**, and has no first-class WebSockets or long-lived streams. You can run WSGI apps on ASGI via adapters (`a2wsgi`, `WSGIMiddleware`), but they stay sync underneath.
+
+| | WSGI | ASGI |
+| --- | --- | --- |
+| Style | sync | async (can still call sync code) |
+| Connections | one request, then done | many concurrent, plus WebSockets |
+| Typical apps | Flask, classic Django | FastAPI, Starlette, Django (ASGI mode) |
+| Typical servers | Gunicorn, uWSGI | Uvicorn, Hypercorn, Daphne |
+
+#### ASGI servers and alternatives
+
+These are ASGI **servers** (alternatives to Uvicorn):
+
+- **Uvicorn** — asyncio; common FastAPI default (what Your Next Travel uses)
+- **Hypercorn** — HTTP/1, HTTP/2, HTTP/3; asyncio / Trio / uvloop
+- **Daphne** — Django Channels; strong on WebSockets
+- **Granian** — Rust-based ASGI/WSGI/RSGI server
+- **Gunicorn + Uvicorn workers** — Gunicorn supervises processes; each worker is Uvicorn (common in production)
+
+Related but not ASGI:
+
+- **WSGI** — still fine for sync Flask/Django
+- **RSGI** — another Python async app interface (Granian); less common
+
+Because FastAPI speaks ASGI, `"app:app"` can be served by any ASGI server, not only Uvicorn.
+
+#### Compared to Tomcat and WebLogic
+
+Yes — **same job at a high level**: they accept HTTP (and often WebSockets), then hand the request to your application.
+
+| Java world | Python ASGI world |
+| --- | --- |
+| Tomcat, Jetty | Uvicorn, Hypercorn, Daphne |
+| WebLogic, WebSphere (full app server) | closer to Gunicorn + Uvicorn, or nginx + Uvicorn |
+| WAR / servlet (`HttpServlet`) | ASGI app (`FastAPI()` / Django) |
+| `web.xml` / servlet mapping | `@app.get`, `@app.post` |
+
+Tomcat and WebLogic are **heavy application servers**: many Java apps, thread pools, JNDI, datasources, sessions, clustering, admin consoles.
+
+Uvicorn, Hypercorn, and Daphne are **slim protocol servers**. They mostly bind a port, speak HTTP/ASGI, and call one Python app. They do not ship a Java-style admin console or JNDI. TLS, process management, and load balancing are usually **nginx/Caddy + Gunicorn/systemd/Docker**.
+
+- **Uvicorn** ≈ a small Tomcat for one FastAPI process
+- **WebLogic** ≈ a whole platform (server + ops + extras)
+- **Gunicorn with Uvicorn workers** ≈ a production farm: one master, several workers
+
+In Your Next Travel, Uvicorn is the server; FastAPI is the app inside it — like Tomcat hosting one webapp.

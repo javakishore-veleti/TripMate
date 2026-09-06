@@ -1,0 +1,52 @@
+{
+  "as_of": "2026-09-06",
+  "currency": "USD",
+  "unit": "usd_per_1m_tokens",
+  "models": {
+    "llama-3.3-70b-versatile": {
+      "provider": "groq",
+      "input": 0.59,
+      "output": 0.79
+    },
+    "llama-3.1-8b-instant": {
+      "provider": "groq",
+      "input": 0.05,
+      "output": 0.08
+    },
+    "openai/gpt-oss-120b": {
+      "provider": "groq",
+      "input": 0.15,
+      "output": 0.6
+    },
+    "openai/gpt-oss-20b": {
+      "provider": "groq",
+      "input": 0.075,
+      "output": 0.3
+    },
+    "openai/gpt-oss-safeguard-20b": {
+      "provider": "groq",
+      "input": 0.075,
+      "output": 0.3
+    },
+    "qwen/qwen3.6-27b": {
+      "provider": "groq",
+      "input": 0.6,
+      "output": 3.0
+    },
+    "qwen/qwen3.8-27b": {
+      "provider": "groq",
+      "input": 0.8,
+      "output": 4.0
+    },
+    "meta-llama/llama-prompt-guard-2-22m": {
+      "provider": "groq",
+      "input": 0.03,
+      "output": 0.03
+    },
+    "meta-llama/llama-prompt-guard-2-86m": {
+      "provider": "groq",
+      "input": 0.04,
+      "output": 0.04
+    }
+  }
+}

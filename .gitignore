@@ -147,6 +147,13 @@ activemq-data/
 # SageMath parsed files
 *.sage.py
 
+# Local SQLite databases and preference skill files
+data/travel-skills/
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+
 # Environments
 .env
 .envrc

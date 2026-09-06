@@ -1,0 +1,37 @@
+<section class="planner-card delete-plan">
+  @if (step() === 0) {
+    <h2>Delete this travel plan</h2>
+    <p>This removes the draft and the saved request. It cannot be undone.</p>
+    <div class="pref-actions">
+      <button type="button" class="danger-btn" [disabled]="deleting()" (click)="askAgain()">
+        I want to delete this
+      </button>
+    </div>
+  } @else {
+    <h2>Type to confirm</h2>
+    <p>
+      Type <strong>{{ phrase }}</strong> exactly, then delete. This is the second confirmation.
+    </p>
+    <label class="adapter-field">
+      <span>Confirmation</span>
+      <input
+        type="text"
+        [ngModel]="typed"
+        (ngModelChange)="typed = $event"
+        [placeholder]="phrase"
+        autocomplete="off"
+      />
+    </label>
+    <div class="pref-actions">
+      <button type="button" class="danger-btn" [disabled]="!canDelete() || deleting()" (click)="confirm()">
+        {{ deleting() ? 'Deleting…' : 'Delete this travel plan' }}
+      </button>
+      <button type="button" class="secondary-link" [disabled]="deleting()" (click)="cancel()">
+        Keep the plan
+      </button>
+    </div>
+  }
+  @if (error()) {
+    <p class="auth-error">{{ error() }}</p>
+  }
+</section>
