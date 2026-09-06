@@ -25,8 +25,27 @@
 
 > **A planner, not a booking site.** You review every draft. Nothing is purchased or reserved for you. You keep the keys.
 
+## Why Agentic AI
+
+A trip is more than one answer. Air, stays, weather, and cost pull on each other. One long chat tends to skip a piece or invent a city you never asked for.
+
+Agentic here means small jobs that take a turn, then hand the next person the notes. You still read the draft. You approve it, send it back, or delete it.
+
+The models stay the ones you picked. The graph only decides who speaks next.
+
+## What is agentic in this product
+
+- **The trip draft** — intake reads your prompt. A coordinator picks who goes next. Air, stays, climate, and cost each write their part. A later step stitches a week you can sit with.
+- **The review loop** — you keep the last word. Approve, comment, or delete. Nothing is booked.
+- **What’s on nearby** — the journal classifies the month and lists happenings in the radius of the cities you watch.
+- **The places briefs** — week, month, and quarter reads of those same cities, using the preference packs you switched on.
+
+The portal and your account are not agents. They store places, packs, and drafts, then call the graph when you ask.
+
 ## Table of contents
 
+- [Why Agentic AI](#why-agentic-ai)
+- [What is agentic in this product](#what-is-agentic-in-this-product)
 - [The idea](#the-idea)
 - [Who it is for](#who-it-is-for)
 - [What you can do](#what-you-can-do)
