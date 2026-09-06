@@ -1,21 +1,21 @@
 # Your Next Travel
 
 <p align="center">
-  <img src="Docs/Assets/repo-banner-readme.png" alt="Your Next Travel — plan the next trip at your table. The cities you watch stay in view." width="100%">
+  <img src="Docs/Assets/repo-banner-readme.png" alt="Your Next Travel — a travel portal you run yourself. Your keys. Your data. Your next trip." width="100%">
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License: Apache 2.0">
-  <img src="https://img.shields.io/badge/You_run_it-your_laptop_or_your_cloud-0B6E4F" alt="You run it">
-  <img src="https://img.shields.io/badge/Data-stays_on_your_machine-1B4965" alt="Data stays on your machine">
-  <img src="https://img.shields.io/badge/Drafts-you_review_every_plan-CA6702" alt="You review every plan">
-  <img src="https://img.shields.io/badge/Not_a_booking_site-you_keep_the_keys-6D597A" alt="Not a booking site">
-  <img src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white" alt="Python">
-  <img src="https://img.shields.io/badge/Angular-DD0031?logo=angular&logoColor=white" alt="Angular">
-  <img src="https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white" alt="FastAPI">
-  <img src="https://img.shields.io/badge/LangGraph-1C3C3C" alt="LangGraph">
-  <img src="https://img.shields.io/badge/SQLite_or_Postgres-003B57" alt="SQLite or Postgres">
-  <img src="https://img.shields.io/badge/Ollama_or_Groq-111111" alt="Ollama or Groq">
+  <a href="LICENSE"><img alt="License: Apache 2.0" src="https://img.shields.io/badge/license-Apache%202.0-1B4F72"></a>
+  <img alt="You run it on your laptop or your cloud" src="https://img.shields.io/badge/you%20run%20it-laptop%20or%20your%20cloud-0B6E4F">
+  <img alt="Data stays on your machine" src="https://img.shields.io/badge/data-stays%20on%20your%20machine-1B4965">
+  <img alt="You review every draft" src="https://img.shields.io/badge/drafts-you%20review%20every%20plan-CA6702">
+  <img alt="Not a booking site" src="https://img.shields.io/badge/booking-not%20a%20booking%20site-6D597A">
+  <img alt="Python 3.12+" src="https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white">
+  <img alt="Angular TypeScript" src="https://img.shields.io/badge/Angular-TypeScript-DD0031?logo=angular&logoColor=white">
+  <img alt="API FastAPI" src="https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white">
+  <img alt="Planner LangGraph" src="https://img.shields.io/badge/planner-LangGraph-1C3C3C">
+  <img alt="Database SQLite or Postgres" src="https://img.shields.io/badge/database-SQLite%20or%20Postgres-003B57">
+  <img alt="Models Ollama or Groq" src="https://img.shields.io/badge/models-Ollama%20or%20Groq-111111">
 </p>
 
 **A travel portal you run yourself.** Watch the cities you care about, read what is on nearby, and draft a trip you can sit with — then approve it, change it, or delete it. The project authors do not host your account.
@@ -42,8 +42,6 @@
 - [How it's built (short)](#how-its-built-short)
 - [Local development](#local-development)
 - [Request flow](#request-flow)
-  - [1. User to the API to the planner service](#1-user-to-the-api-to-the-planner-service)
-  - [2. Planner service to TravelRequestAgentImpl](#2-planner-service-to-travelrequestagentimpl)
 - [Where code lives](#where-code-lives)
 - [Understanding Python Frameworks](#understanding-python-frameworks)
   - [Uvicorn Usage](#uvicorn-usage)
@@ -163,55 +161,9 @@ Optional: `OLLAMA_BASE_URL` (default `http://127.0.0.1:11434`) for a local Ollam
 
 ## Request flow
 
-What runs **today**. The UI sends `agentic_adapter` (default `langgraph`). The API lives under `middleware/`. Each feature module owns its api, facade, service, and DAOs. LangGraph and LLM providers stay in `middleware/adapters/` so the same module can later use Google ADK. More diagrams are in [Docs/Design/TravelReqAgentImpl.md](Docs/Design/TravelReqAgentImpl.md).
+What runs **today**: browser → `plans_mgmt` API → facade → planner service → `TravelRequestAgentImpl` → LangGraph adapter → a draft you review.
 
-### 1. User to the API to the planner service
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor User
-    participant UI as Browser UI
-    participant API as plans_mgmt api
-    participant Facade as PlannerFacade
-    participant Svc as TravelPlannerService
-
-    User->>UI: Type prompt, Generate Draft
-    UI->>API: POST /api/v1/travel/planner
-    Note over UI,API: TravelRequest(message, thread_id, agentic_adapter)
-    API->>API: resolve_thread_id, TravelReqCtx
-    API->>Facade: execute(request, ctx)
-    Facade->>Svc: execute(request, ctx)
-    Svc-->>Facade: ResponseCode
-    Facade-->>API: ResponseCode
-    API->>API: result.prompt = ctx.user_message
-    API-->>UI: TravelResponse
-    UI-->>User: Draft plan for review
-```
-
-### 2. Planner service to TravelRequestAgentImpl
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Svc as TravelPlannerServiceImpl
-    participant Agents as AgentsObjectFactory
-    participant Core as TravelRequestAgentImpl
-    participant Adapters as AgenticAdapterObjectFactory
-    participant Graph as TripComposeAdapter
-
-    Svc->>Agents: get_agent(AGENT_TRAVEL_REQUEST)
-    Agents-->>Svc: TravelRequestAgentImpl
-    Svc->>Core: execute(request, ctx)
-    Core->>Core: ctx.user_message = request.message
-    Core->>Adapters: get_agentic_adapter(request.agentic_adapter)
-    Adapters-->>Core: TripComposeAdapter
-    Core->>Graph: execute(request, ctx)
-    Graph-->>Core: SUCCESS
-    Core-->>Svc: SUCCESS or SKIP
-```
-
-More diagrams (coordinator, LLM provider): [Docs/Design/TravelReqAgentImpl.md](Docs/Design/TravelReqAgentImpl.md).
+The UI sends `agentic_adapter` (default `langgraph`). Sequence diagrams live in [Docs/Design/TravelReqAgentImpl.md](Docs/Design/TravelReqAgentImpl.md), not on this product page.
 
 ## Where code lives
 
