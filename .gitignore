@@ -154,6 +154,9 @@ data/*.db-journal
 data/*.db-wal
 data/*.db-shm
 
+# Local retired-repo git backup (do not publish)
+.git-old-backup/
+
 # Environments
 .env
 .envrc
