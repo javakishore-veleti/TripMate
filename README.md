@@ -1,7 +1,7 @@
 # Your Next Travel Planner Locally (YNTPL)
 
 <p align="center">
-  <img src="Docs/Assets/repo-banner-readme.png" alt="Your Next Travel Planner Locally — a travel research and planning portal running on your laptop or in your cloud. Data stays in your laptop or cloud." width="100%">
+  <img src="Docs/Assets/yntpl-repo-banner.png" alt="Your Next Travel Planner Locally — a travel research and planning portal running on your laptop or in your cloud. Data stays in your laptop or cloud." width="100%">
 </p>
 
 <p align="center">
