@@ -3,8 +3,9 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from middleware.adapters.persistence.base import Base
-from middleware.adapters.persistence import entities as _entities  # noqa: F401
+from middleware.persistence.base import Base
+from middleware.modules.plans_mgmt.persistence import entities as _plan_entities  # noqa: F401
+from middleware.modules.user_mgmt.persistence import entities as _user_entities  # noqa: F401
 from middleware.persistence.settings import database_url
 
 config = context.config

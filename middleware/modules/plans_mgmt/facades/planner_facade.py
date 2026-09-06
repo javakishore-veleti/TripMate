@@ -1,6 +1,6 @@
 from middleware.common.dtos import TravelReqCtx, TravelRequest
-from middleware.core.services.objects import ServicesObjectFactory
-from middleware.core.services.service_names import SERVICE_TRAVEL_PLANNER
+from middleware.modules.shared.services.objects import ServicesObjectFactory
+from middleware.modules.shared.services.service_names import SERVICE_TRAVEL_PLANNER
 
 
 class PlannerFacade:

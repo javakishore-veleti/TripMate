@@ -1,5 +1,5 @@
-from middleware.core.services.objects import ServicesObjectFactory
-from middleware.core.services.service_names import SERVICE_JOURNAL_HAPPENINGS
+from middleware.modules.shared.services.objects import ServicesObjectFactory
+from middleware.modules.shared.services.service_names import SERVICE_JOURNAL_HAPPENINGS
 
 
 class HappeningsFacade:

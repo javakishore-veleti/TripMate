@@ -2,9 +2,9 @@ from datetime import datetime, timezone
 
 from overrides import override
 
-from middleware.adapters.persistence.engine import session_scope
-from middleware.adapters.persistence.entities.app_user import AppUser
-from middleware.core.dao.interfaces import AppUserDao
+from middleware.persistence.engine import session_scope
+from middleware.modules.user_mgmt.persistence.entities.app_user import AppUser
+from middleware.modules.user_mgmt.persistence.interfaces import AppUserDao
 
 
 def _iso(value):

@@ -1,7 +1,7 @@
 from overrides import override
 
 from middleware.modules.travel_search.workflows.places_planner.main import run_places_planner
-from middleware.core.services.interfaces import DashboardPlacesService
+from middleware.modules.shared.services.interfaces import DashboardPlacesService
 
 
 class DashboardPlacesServiceImpl(DashboardPlacesService):

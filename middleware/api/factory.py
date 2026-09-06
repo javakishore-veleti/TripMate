@@ -7,21 +7,36 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from middleware.common.app_constants import APP_NAME
 from middleware.common.log import configure_logging, get_logger
-from middleware.modules.approvals_mgmt.router import router as approvals_router
-from middleware.modules.health.router import router as health_router
-from middleware.modules.plans_mgmt.router import router as plans_router
-from middleware.modules.travel_search.router import router as travel_search_router
-from middleware.modules.preferences_mgmt.router import router as preferences_router
-from middleware.modules.user_mgmt.router import router as user_router
+from middleware.modules.approvals_mgmt.api.router import router as approvals_router
+from middleware.modules.health.api.router import router as health_router
+from middleware.modules.plans_mgmt.api.router import router as plans_router
+from middleware.modules.preferences_mgmt.api.router import router as preferences_router
+from middleware.modules.travel_search.api.router import router as travel_search_router
+from middleware.modules.user_mgmt.api.router import router as user_router
 from middleware.persistence.schema_setup import upgrade_schema
 
 load_dotenv()
 logger = get_logger("api")
 
 
-def cors_origins() -> list[str]:
-    raw = os.getenv("CORS_ORIGINS", "http://127.0.0.1:4200,http://localhost:4200")
-    return [origin.strip() for origin in raw.split(",") if origin.strip()]
+def apply_cors(app: FastAPI) -> None:
+    raw = (os.getenv("CORS_ORIGINS") or "*").strip()
+    if raw == "*":
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origin_regex=".*",
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
+        return
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[origin.strip() for origin in raw.split(",") if origin.strip()],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 
 @asynccontextmanager
@@ -40,13 +55,7 @@ def create_app() -> FastAPI:
         version="0.1.0",
         lifespan=lifespan,
     )
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=cors_origins(),
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+    apply_cors(app)
     app.include_router(health_router)
     app.include_router(user_router)
     app.include_router(preferences_router)

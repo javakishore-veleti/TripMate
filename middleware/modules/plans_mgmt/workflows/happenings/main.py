@@ -14,7 +14,7 @@ from middleware.modules.plans_mgmt.workflows.happenings.tasks.happenings import 
 )
 from middleware.common.log import get_logger
 from middleware.common.user_preferences import format_place, normalize_preferences
-from middleware.modules.preferences_mgmt.services.store import selected_skill_names
+from middleware.modules.preferences_mgmt.persistence.store import selected_skill_names
 
 logger = get_logger(__name__)
 

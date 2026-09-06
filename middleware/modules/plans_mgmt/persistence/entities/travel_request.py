@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from sqlalchemy import JSON, DateTime, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
-from middleware.adapters.persistence.base import Base
+from middleware.persistence.base import Base
 
 
 class TravelRequestRecord(Base):

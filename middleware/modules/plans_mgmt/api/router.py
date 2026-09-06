@@ -15,8 +15,8 @@ from middleware.common.dtos import (
 )
 from middleware.common.http_session import require_api_user
 from middleware.common.log import get_logger, preview
-from middleware.core.dao.dao_names import DAO_TRAVEL_REQUEST
-from middleware.core.dao.objects import DaoObjectFactory
+from middleware.modules.shared.persistence.dao.dao_names import DAO_TRAVEL_REQUEST
+from middleware.modules.shared.persistence.dao.objects import DaoObjectFactory
 from middleware.modules.plans_mgmt.facades.happenings_facade import HappeningsFacade
 from middleware.modules.plans_mgmt.facades.planner_facade import PlannerFacade
 

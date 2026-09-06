@@ -1,7 +1,7 @@
 from fastapi import HTTPException, Request
 
-from middleware.core.services.objects import ServicesObjectFactory
-from middleware.core.services.service_names import SERVICE_AUTH
+from middleware.modules.shared.services.objects import ServicesObjectFactory
+from middleware.modules.shared.services.service_names import SERVICE_AUTH
 
 SESSION_COOKIE = "your_next_travel_session"
 SESSION_MAX_AGE = 14 * 24 * 60 * 60

@@ -3,9 +3,9 @@ from uuid import uuid4
 
 from overrides import override
 
-from middleware.adapters.persistence.engine import session_scope
-from middleware.adapters.persistence.entities.travel_request import TravelRequestRecord
-from middleware.core.dao.interfaces import TravelRequestDao
+from middleware.persistence.engine import session_scope
+from middleware.modules.plans_mgmt.persistence.entities.travel_request import TravelRequestRecord
+from middleware.modules.plans_mgmt.persistence.interfaces import TravelRequestDao
 
 
 def _iso(value):

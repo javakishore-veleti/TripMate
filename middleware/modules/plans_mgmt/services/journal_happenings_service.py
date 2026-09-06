@@ -1,7 +1,7 @@
 from overrides import override
 
 from middleware.modules.plans_mgmt.workflows.happenings.main import run_journal_happenings
-from middleware.core.services.interfaces import JournalHappeningsService
+from middleware.modules.shared.services.interfaces import JournalHappeningsService
 
 
 class JournalHappeningsServiceImpl(JournalHappeningsService):

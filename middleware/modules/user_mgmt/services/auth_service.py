@@ -6,8 +6,8 @@ from sqlalchemy.exc import IntegrityError
 from middleware.common.jwt_tokens import create_access_token, decode_access_token
 from middleware.common.security import hash_password, verify_password
 from middleware.common.user_preferences import empty_preferences, normalize_preferences
-from middleware.core.dao.dao_names import DAO_APP_SESSION, DAO_APP_USER, DAO_TRAVEL_REQUEST
-from middleware.core.dao.objects import DaoObjectFactory
+from middleware.modules.shared.persistence.dao.dao_names import DAO_APP_SESSION, DAO_APP_USER, DAO_TRAVEL_REQUEST
+from middleware.modules.shared.persistence.dao.objects import DaoObjectFactory
 
 SESSION_DAYS = 14
 

@@ -2,9 +2,9 @@ from datetime import datetime, timezone
 
 from overrides import override
 
-from middleware.adapters.persistence.engine import session_scope
-from middleware.adapters.persistence.entities.app_session import AppSession
-from middleware.core.dao.interfaces import AppSessionDao
+from middleware.persistence.engine import session_scope
+from middleware.modules.user_mgmt.persistence.entities.app_session import AppSession
+from middleware.modules.user_mgmt.persistence.interfaces import AppSessionDao
 
 
 class AppSessionDaoImpl(AppSessionDao):

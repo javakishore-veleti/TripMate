@@ -1,4 +1,13 @@
-SERVICE_TRAVEL_PLANNER = "travel_planner_service"
-SERVICE_AUTH = "auth_service"
-SERVICE_DASHBOARD_PLACES = "dashboard_places_service"
-SERVICE_JOURNAL_HAPPENINGS = "journal_happenings_service"
+from middleware.modules.shared.services.service_names import (
+    SERVICE_AUTH,
+    SERVICE_DASHBOARD_PLACES,
+    SERVICE_JOURNAL_HAPPENINGS,
+    SERVICE_TRAVEL_PLANNER,
+)
+
+__all__ = [
+    "SERVICE_AUTH",
+    "SERVICE_DASHBOARD_PLACES",
+    "SERVICE_JOURNAL_HAPPENINGS",
+    "SERVICE_TRAVEL_PLANNER",
+]

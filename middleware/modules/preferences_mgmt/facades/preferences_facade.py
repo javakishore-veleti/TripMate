@@ -1,4 +1,4 @@
-from middleware.modules.preferences_mgmt.services import store
+from middleware.modules.preferences_mgmt.persistence import store
 
 
 class PreferencesFacade:

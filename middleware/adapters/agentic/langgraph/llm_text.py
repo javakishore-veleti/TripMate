@@ -8,7 +8,7 @@ from middleware.common.llm_catalog import DEFAULT_LLM_MODEL, DEFAULT_LLM_PROVIDE
 from middleware.common.llm_dtos import LLMConfig, LLMMessage, LLMReqCtx, LLMRequest
 from middleware.common.log import get_logger
 from middleware.common.user_preferences import traveler_profile_block
-from middleware.modules.preferences_mgmt.services.store import selected_skill_text
+from middleware.modules.preferences_mgmt.persistence.store import selected_skill_text
 
 logger = get_logger(__name__)
 

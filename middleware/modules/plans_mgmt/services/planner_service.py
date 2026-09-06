@@ -10,9 +10,9 @@ from middleware.common.dtos import TravelReqCtx, TravelRequest
 from middleware.common.llm_usage import get_usage, start_usage
 from middleware.core.agents.agent_names import AGENT_TRAVEL_REQUEST
 from middleware.core.agents.objects import AgentsObjectFactory
-from middleware.core.dao.dao_names import DAO_TRAVEL_REQUEST
-from middleware.core.dao.objects import DaoObjectFactory
-from middleware.core.services.interfaces import TravelPlannerService
+from middleware.modules.shared.persistence.dao.dao_names import DAO_TRAVEL_REQUEST
+from middleware.modules.shared.persistence.dao.objects import DaoObjectFactory
+from middleware.modules.shared.services.interfaces import TravelPlannerService
 
 
 class TravelPlannerServiceImpl(TravelPlannerService):
@@ -22,8 +22,8 @@ class TravelPlannerServiceImpl(TravelPlannerService):
         travel_dao = DaoObjectFactory.get_dao(DAO_TRAVEL_REQUEST)
         if ctx.user_id:
             if not ctx.user_preferences:
-                from middleware.core.services.objects import ServicesObjectFactory
-                from middleware.core.services.service_names import SERVICE_AUTH
+                from middleware.modules.shared.services.objects import ServicesObjectFactory
+                from middleware.modules.shared.services.service_names import SERVICE_AUTH
 
                 ctx.user_preferences = ServicesObjectFactory.get_service(
                     SERVICE_AUTH

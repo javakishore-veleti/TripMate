@@ -37,7 +37,7 @@ from middleware.modules.plans_mgmt.tasks.specialists.ids import (
     TRIP_DRAFT,
 )
 from middleware.adapters.agentic.langgraph.utils import _serialize_result
-from middleware.adapters.persistence.checkpointer import build_checkpointer
+from middleware.persistence.checkpointer import build_checkpointer
 from middleware.common.app_constants import ResponseCode
 from middleware.common.dtos import TravelReqCtx, TravelRequest, TravelState
 from middleware.common.log import get_logger
