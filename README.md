@@ -6,17 +6,12 @@
 
 <p align="center">
   <a href="LICENSE"><img alt="License: Apache 2.0" src="https://img.shields.io/badge/license-Apache%202.0-1B4F72"></a>
-  <img alt="A travel research and planning portal you run on your laptop or in your cloud" src="https://img.shields.io/badge/product-research%20%26%20planning%20portal-0B6E4F">
-  <img alt="Runs on your laptop or in your cloud" src="https://img.shields.io/badge/runs%20on-your%20laptop%20or%20your%20cloud-0E7C7B">
-  <img alt="Watch the cities you care about" src="https://img.shields.io/badge/places-cities%20you%20watch-1B4965">
-  <img alt="Read what is on nearby" src="https://img.shields.io/badge/briefs-what%27s%20on%20nearby-0E7C7B">
-  <img alt="You review every draft" src="https://img.shields.io/badge/drafts-you%20review%20every%20plan-CA6702">
-  <img alt="Data stays in your laptop or cloud" src="https://img.shields.io/badge/data-stays%20in%20your%20laptop%20or%20cloud-2C3E50">
-  <img alt="Not a booking site" src="https://img.shields.io/badge/booking-not%20a%20booking%20site-6D597A">
-  <img alt="Agentic AI" src="https://img.shields.io/badge/planning-Agentic%20AI-1C3C3C">
-  <img alt="Python FastAPI" src="https://img.shields.io/badge/Python-FastAPI-3776AB?logo=python&logoColor=white">
+  <img alt="Python 3.12+" src="https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white">
   <img alt="Angular TypeScript" src="https://img.shields.io/badge/Angular-TypeScript-DD0031?logo=angular&logoColor=white">
-  <img alt="LangGraph" src="https://img.shields.io/badge/agentic-LangGraph-0E7C7B">
+  <img alt="API FastAPI" src="https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white">
+  <img alt="Agentic AI" src="https://img.shields.io/badge/planning-Agentic%20AI-1C3C3C">
+  <img alt="Planner LangGraph" src="https://img.shields.io/badge/planner-LangGraph-0E7C7B">
+  <img alt="Database SQLite or Postgres" src="https://img.shields.io/badge/database-SQLite%20or%20Postgres-003B57">
   <img alt="Models Ollama or Groq" src="https://img.shields.io/badge/models-Ollama%20or%20Groq-111111">
 </p>
 
