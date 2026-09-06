@@ -25,26 +25,36 @@
 
 > **A planner, not a booking site.** You review every draft. Nothing is purchased or reserved for you. You keep the keys.
 
-## Why Agentic AI
+## Why an Agentic Travel Planner
 
-A trip is more than one answer. Air, stays, weather, and cost pull on each other. One long chat tends to skip a piece or invent a city you never asked for.
+A chatbot waits for a prompt and returns one answer. An **agentic travel planner** takes a broader goal — a week, a budget, a few cities — and works through steps.
 
-Agentic here means small jobs that take a turn, then hand the next person the notes. You still read the draft. You approve it, send it back, or delete it.
+It **plans**. It breaks the trip into smaller jobs instead of writing everything in one go.
+
+It **uses tools**. It can call the models you picked, read the cities you watch, and use the preference packs you switched on.
+
+It **adapts**. If a piece is thin, or you send the draft back, it takes another pass.
+
+It is closer to a desk worker than a search box. It gathers notes, then puts a week in front of you.
+
+Many write-ups say agentic systems run with little oversight. YNTPL does not. After you click Generate Draft, the graph runs the jobs. Then it stops. You read the draft. You approve it, comment, or delete it. Nothing is booked.
 
 The models stay the ones you picked. The graph only decides who speaks next.
 
 ## What is agentic in this product
 
-- **The trip draft** — intake reads your prompt. A coordinator picks who goes next. Air, stays, climate, and cost each write their part. A later step stitches a week you can sit with.
-- **The review loop** — you keep the last word. Approve, comment, or delete. Nothing is booked.
+- **Planning** — intake reads your prompt. A coordinator picks who goes next. Air, stays, climate, and cost each write their part. A later step stitches a week you can sit with.
+- **Tool use** — the same models you chose on Account (Ollama on this machine, or Groq if you brought a key). Preference packs and watched cities are the notes those jobs read.
+- **Adaptability** — a declined path if the request should not go on. A review step after the draft. Your comment starts another pass.
+- **Bounded autonomy** — you do not click Air, then Stays, then Cost. One ask runs that sequence. Then you keep the last word.
 - **What’s on nearby** — the journal classifies the month and lists happenings in the radius of the cities you watch.
-- **The places briefs** — week, month, and quarter reads of those same cities, using the preference packs you switched on.
+- **The places briefs** — week, month, and quarter reads of those same cities.
 
 The portal and your account are not agents. They store places, packs, and drafts, then call the graph when you ask.
 
 ## Table of contents
 
-- [Why Agentic AI](#why-agentic-ai)
+- [Why an Agentic Travel Planner](#why-an-agentic-travel-planner)
 - [What is agentic in this product](#what-is-agentic-in-this-product)
 - [The idea](#the-idea)
 - [Who it is for](#who-it-is-for)
