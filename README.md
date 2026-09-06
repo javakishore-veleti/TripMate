@@ -1,28 +1,30 @@
-# Your Next Travel
+# Your Next Travel Planner Locally (YNTPL)
 
 <p align="center">
-  <img src="Docs/Assets/repo-banner-readme.png" alt="Your Next Travel — a travel portal you run yourself. Your keys. Your data. Your next trip." width="100%">
+  <img src="Docs/Assets/repo-banner-readme.png" alt="Your Next Travel Planner Locally — a travel research and planning portal running on your laptop or in your cloud. Data stays in your laptop or cloud." width="100%">
 </p>
 
 <p align="center">
   <a href="LICENSE"><img alt="License: Apache 2.0" src="https://img.shields.io/badge/license-Apache%202.0-1B4F72"></a>
-  <img alt="You run it on your laptop or your cloud" src="https://img.shields.io/badge/you%20run%20it-laptop%20or%20your%20cloud-0B6E4F">
-  <img alt="Data stays on your machine" src="https://img.shields.io/badge/data-stays%20on%20your%20machine-1B4965">
+  <img alt="A travel research and planning portal you run on your laptop or in your cloud" src="https://img.shields.io/badge/product-research%20%26%20planning%20portal-0B6E4F">
+  <img alt="Runs on your laptop or in your cloud" src="https://img.shields.io/badge/runs%20on-your%20laptop%20or%20your%20cloud-0E7C7B">
+  <img alt="Watch the cities you care about" src="https://img.shields.io/badge/places-cities%20you%20watch-1B4965">
+  <img alt="Read what is on nearby" src="https://img.shields.io/badge/briefs-what%27s%20on%20nearby-0E7C7B">
   <img alt="You review every draft" src="https://img.shields.io/badge/drafts-you%20review%20every%20plan-CA6702">
+  <img alt="Data stays in your laptop or cloud" src="https://img.shields.io/badge/data-stays%20in%20your%20laptop%20or%20cloud-2C3E50">
   <img alt="Not a booking site" src="https://img.shields.io/badge/booking-not%20a%20booking%20site-6D597A">
-  <img alt="Python 3.12+" src="https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white">
+  <img alt="Agentic AI" src="https://img.shields.io/badge/planning-Agentic%20AI-1C3C3C">
+  <img alt="Python FastAPI" src="https://img.shields.io/badge/Python-FastAPI-3776AB?logo=python&logoColor=white">
   <img alt="Angular TypeScript" src="https://img.shields.io/badge/Angular-TypeScript-DD0031?logo=angular&logoColor=white">
-  <img alt="API FastAPI" src="https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white">
-  <img alt="Planner LangGraph" src="https://img.shields.io/badge/planner-LangGraph-1C3C3C">
-  <img alt="Database SQLite or Postgres" src="https://img.shields.io/badge/database-SQLite%20or%20Postgres-003B57">
+  <img alt="LangGraph" src="https://img.shields.io/badge/agentic-LangGraph-0E7C7B">
   <img alt="Models Ollama or Groq" src="https://img.shields.io/badge/models-Ollama%20or%20Groq-111111">
 </p>
 
-**A travel portal you run yourself.** Watch the cities you care about, read what is on nearby, and draft a trip you can sit with — then approve it, change it, or delete it. The project authors do not host your account.
+**YNTPL** is a travel research and planning portal running on your laptop or in your cloud. Watch the cities you care about, read what is on nearby, and draft a trip you can sit with — then approve it, change it, or delete it. The project authors do not host your account.
 
-**Your Travel Portal (YTP)** is the project. **Your Next Travel** is the name you see in the browser. Your places, preference packs, drafts, and keys stay on your laptop or on a cloud you own.
+**Your Next Travel Planner Locally (YNTPL)** is the product you see in the browser. Your places, preference packs, drafts, and keys stay on your laptop or on a cloud you own.
 
-> **You run it.** There is no hosted Your Next Travel. Clone it, start it, and the portal is yours.
+> **You run it.** There is no hosted YNTPL. Clone it and start it on your laptop, or on a cloud you own.
 
 > **Your data stays with you.** Preference packs and the local database live under `runtime-data/local-deploy/` on the machine you chose. They are not in this git repository.
 
@@ -58,11 +60,11 @@
   <img src="Docs/images/your-next-travel-vision.png" alt="Planning the next trip at home — a week outline, a circled city, and the street you might walk." width="100%">
 </p>
 
-Most travel sites keep your searches, your saved places, and the models that write the plan. Your Next Travel is the opposite: a planning desk that lives with you.
+Most travel sites keep your searches, your saved places, and the models that write the plan. YNTPL is the opposite: a planning desk that lives with you.
 
 - **Places you watch** — up to five cities and how far you will travel from each
 - **Briefs that plan** — what kind of month it is, what is on nearby, and a trip draft you can sit with
-- **Privacy you keep** — your account, drafts, and keys never go to a hosted Your Next Travel service, because there is not one
+- **Privacy you keep** — your account, drafts, and keys never go to a hosted YNTPL service, because there is not one
 
 You open the portal, tell it where you look, and it helps you see the next trip. You approve the draft, ask for a change, or delete the plan. Nothing leaves the machine you chose unless you send it.
 
@@ -106,7 +108,7 @@ You stay in the loop. The draft is a starting point, not a booking you cannot un
 
 ### Keep the privacy you care about
 
-On **Account** you can see when you last signed in, choose how briefs are written, and delete your account. Preference files and the local database live under `runtime-data/local-deploy/` on the machine you run. They are not in this git repository and not on a shared Your Next Travel host.
+On **Account** you can see when you last signed in, choose how briefs are written, and delete your account. Preference files and the local database live under `runtime-data/local-deploy/` on the machine you run. They are not in this git repository and not on a shared YNTPL host.
 
 Run it at home, or on AWS, Azure, GCP, or another cloud **you** own. You keep the keys.
 
@@ -186,7 +188,7 @@ FastAPI is the **application** (routes, validation, responses). Uvicorn is the *
 
 ### Uvicorn Usage
 
-Your Next Travel starts the API from `middleware/app.py` with configurable host and port (defaults: `0.0.0.0` and `8000`):
+YNTPL starts the API from `middleware/app.py` with configurable host and port (defaults: `0.0.0.0` and `8000`):
 
 ```bash
 python -m middleware.app
@@ -278,7 +280,7 @@ WSGI is request/response only, **synchronous**, and has no first-class WebSocket
 
 These are ASGI **servers** (alternatives to Uvicorn):
 
-- **Uvicorn** — asyncio; common FastAPI default (what Your Next Travel uses)
+- **Uvicorn** — asyncio; common FastAPI default (what YNTPL uses)
 - **Hypercorn** — HTTP/1, HTTP/2, HTTP/3; asyncio / Trio / uvloop
 - **Daphne** — Django Channels; strong on WebSockets
 - **Granian** — Rust-based ASGI/WSGI/RSGI server
@@ -310,4 +312,4 @@ Uvicorn, Hypercorn, and Daphne are **slim protocol servers**. They mostly bind a
 - **WebLogic** ≈ a whole platform (server + ops + extras)
 - **Gunicorn with Uvicorn workers** ≈ a production farm: one master, several workers
 
-In Your Next Travel, Uvicorn is the server; FastAPI is the app inside it — like Tomcat hosting one webapp.
+In YNTPL, Uvicorn is the server; FastAPI is the app inside it — like Tomcat hosting one webapp.
