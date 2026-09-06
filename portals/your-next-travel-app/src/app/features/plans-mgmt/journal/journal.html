@@ -1,76 +1,148 @@
 <section class="hero-panel page-hero">
   <p class="kicker">Trip journal</p>
-  <h1>Your trip stories</h1>
+  <h1>{{ monthLabel() }}</h1>
   <p class="lede">
-    Drafts and finished plans live here — the places you already started,
-    not a ticket queue.
+    Your calendar, your trips, and what’s happening near the places on your account.
   </p>
-  <div class="hero-actions">
-    <a class="btn-accent" routerLink="/dashboard">Open dashboard</a>
-    <a class="btn-navy" routerLink="/plan">Plan a new trip</a>
-  </div>
 </section>
 
-<section class="accordion-list">
-  <article class="accordion" [class.is-open]="open()">
-    <button type="button" class="accordion-trigger" (click)="toggle()">
-      <span class="accordion-emoji" aria-hidden="true">🗺️</span>
-      <span class="accordion-copy">
-        <strong>Places you’ve started planning</strong>
-        <small>
-          @if (loading()) {
-            Opening your journal…
-          } @else if (trips().length === 1) {
-            1 trip in the journal
-          } @else if (trips().length) {
-            {{ trips().length }} trips in the journal
-          } @else {
-            Nothing packed yet
+<section class="journal-board">
+  <section class="journal-calendar planner-card">
+    <div class="cal-head">
+      <button type="button" class="cal-nav" (click)="shiftMonth(-1)" [disabled]="asking()">‹</button>
+      <h2>{{ monthLabel() }}</h2>
+      <button type="button" class="cal-nav" (click)="shiftMonth(1)" [disabled]="asking()">›</button>
+    </div>
+    <div class="cal-weekdays">
+      @for (label of weekdays; track label) {
+        <span>{{ label }}</span>
+      }
+    </div>
+    <div class="cal-grid">
+      @for (cell of days(); track cell.key) {
+        <div
+          class="cal-day"
+          [class.is-other]="!cell.inMonth"
+          [class.is-today]="cell.isToday"
+          [class.has-event]="cell.eventCount"
+          [class.has-trip]="cell.tripCount"
+        >
+          <span>{{ cell.day }}</span>
+          @if (cell.eventCount || cell.tripCount) {
+            <i>
+              @if (cell.eventCount) {
+                <em class="dot-event"></em>
+              }
+              @if (cell.tripCount) {
+                <em class="dot-trip"></em>
+              }
+            </i>
           }
-        </small>
-      </span>
-      <span class="accordion-chevron" aria-hidden="true">{{ open() ? '−' : '+' }}</span>
-    </button>
-    @if (open()) {
+        </div>
+      }
+    </div>
+    <p class="cal-legend">
+      <span><em class="dot-event"></em> Happening</span>
+      <span><em class="dot-trip"></em> Your trip</span>
+    </p>
+  </section>
+
+  <aside class="journal-side">
+    <section class="planner-card journal-side-card">
+      <div class="side-head">
+        <div>
+          <p class="kicker">Your trips</p>
+          <h2>Started plans</h2>
+        </div>
+        <a class="primary-link" routerLink="/plan">Plan a trip</a>
+      </div>
       @if (loading()) {
-        <p class="journal-pad">Gathering your trips…</p>
+        <p>Opening your journal…</p>
       } @else if (trips().length) {
-        <section class="trip-grid journal-pad">
+        <ul class="trip-list">
           @for (item of trips(); track item.record.thread_id) {
-            <a class="trip-tile" [routerLink]="item.story.href">
-              <img class="trip-tile-photo" [src]="item.story.image" [alt]="item.story.title" />
-              <div class="trip-tile-shade"></div>
-              <div class="trip-tile-top">
-                <span class="status-chip" [class]="'status-' + item.record.status">{{ item.story.status }}</span>
-                @if (item.story.when) {
-                  <span class="trip-tile-when">{{ item.story.when }}</span>
-                }
-              </div>
-              <div class="trip-tile-body">
-                <p class="kicker">{{ item.story.country || 'Your trip' }}</p>
-                <h2>{{ item.story.title }}</h2>
-                @if (item.story.line) {
-                  <p>{{ item.story.line }}</p>
-                }
-                <span class="trip-tile-cta">{{ item.story.cta }} →</span>
-              </div>
-            </a>
+            <li>
+              <a [routerLink]="item.story.href">
+                <img [src]="item.story.image" [alt]="" />
+                <div>
+                  <strong>{{ item.story.title }}</strong>
+                  <small>{{ item.story.status }}@if (item.story.when) { · {{ item.story.when }} }</small>
+                </div>
+              </a>
+            </li>
           }
-        </section>
+        </ul>
       } @else {
-        <section class="trip-empty journal-pad">
-          <img
-            src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1400&q=70"
-            alt=""
-          />
-          <div>
-            <p class="kicker">First page</p>
-            <h2>Browse a place. We’ll keep the story.</h2>
-            <p>Saved drafts show up in this journal.</p>
-            <a class="primary-link" routerLink="/">Find a destination</a>
-          </div>
+        <p>Nothing packed yet. Start from Explore and the draft lands here.</p>
+        <a class="primary-link" routerLink="/">Find a destination</a>
+      }
+    </section>
+
+    <section class="planner-card journal-side-card">
+      <div class="side-head">
+        <div>
+          <p class="kicker">What’s happening</p>
+          <h2>This month near you</h2>
+        </div>
+      </div>
+      @if (skillNames().length) {
+        <p class="side-note">Using {{ skillNames().join(', ') }}.</p>
+      }
+      @if (classifyNote()) {
+        <p class="side-note">{{ classifyNote() }}</p>
+      }
+      @if (!places().length) {
+        <p>Add up to five cities on your account, then we’ll brief this month.</p>
+        <a class="primary-link" routerLink="/account/places">Add places</a>
+      } @else if (asking()) {
+        <p>Looking at this month…</p>
+      } @else if (askError()) {
+        <p class="auth-error">{{ askError() }}</p>
+      } @else if (selectedEvents().length) {
+        <ul class="happen-list">
+          @for (event of selectedEvents(); track event.name + event.near) {
+            <li>
+              <img [src]="photoFor(event)" [alt]="" />
+              <div>
+                <strong>{{ event.name }}</strong>
+                <small>{{ event.when || event.day || 'This month' }} · {{ eventWhere(event) }}</small>
+                <p>{{ event.blurb }}</p>
+                <button type="button" class="secondary-link" (click)="planEvent(event)">Plan around this</button>
+              </div>
+            </li>
+          }
+        </ul>
+        @if (!expanded()) {
+          <button type="button" class="btn-navy see-more" (click)="seeMore()" [disabled]="expanding()">
+            {{ expanding() ? 'Asking the models…' : 'See more this month' }}
+          </button>
+        }
+      } @else {
+        <p>No public events came back for this month. Try another month or add another city.</p>
+      }
+
+      @if (expanded() && (pack() || food() || ideas())) {
+        <section class="deep-briefs">
+          @if (pack()) {
+            <article>
+              <h3>What to take</h3>
+              <p>{{ pack() }}</p>
+            </article>
+          }
+          @if (food()) {
+            <article>
+              <h3>Food to look for</h3>
+              <p>{{ food() }}</p>
+            </article>
+          }
+          @if (ideas()) {
+            <article>
+              <h3>Trip shapes</h3>
+              <p>{{ ideas() }}</p>
+            </article>
+          }
         </section>
       }
-    }
-  </article>
+    </section>
+  </aside>
 </section>

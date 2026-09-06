@@ -1,0 +1,42 @@
+<section class="account-tab">
+  <h2>Places you live or watch</h2>
+  <p>
+    City, state or region, and country — not a street or postal code.
+    What’s happening nearby uses these places.
+  </p>
+  <form class="place-form journal-pad" (submit)="$event.preventDefault(); savePlaces()">
+    @for (index of slots; track index) {
+      <fieldset class="place-row">
+        <legend>Place {{ index + 1 }}</legend>
+        <label>
+          City
+          <input [(ngModel)]="places[index].city" [name]="'city' + index" placeholder="Austin" />
+        </label>
+        <label>
+          State / region
+          <input [(ngModel)]="places[index].region" [name]="'region' + index" placeholder="Texas" />
+        </label>
+        <label>
+          Country
+          <input [(ngModel)]="places[index].country" [name]="'country' + index" placeholder="USA" />
+        </label>
+      </fieldset>
+    }
+    <label class="radius-field">
+      Event radius (miles)
+      <input type="number" min="25" max="2000" step="25" [(ngModel)]="radius" name="radius" />
+      <small>Default 200. The brief stays inside this circle around each place.</small>
+    </label>
+    <div class="pref-actions">
+      <button type="submit" class="primary-link" [disabled]="saving()">
+        {{ saving() ? 'Saving…' : 'Save places' }}
+      </button>
+    </div>
+    @if (saved()) {
+      <p class="pref-saved">{{ saved() }}</p>
+    }
+    @if (error()) {
+      <p class="auth-error">{{ error() }}</p>
+    }
+  </form>
+</section>

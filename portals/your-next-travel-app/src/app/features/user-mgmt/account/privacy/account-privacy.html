@@ -1,0 +1,28 @@
+<section class="account-tab">
+  <h2>Privacy</h2>
+  <p>
+    How this copy keeps your email, places, trip notes, and sign-in.
+    Preference packs are on Preferences. Nothing extra to save here.
+  </p>
+  <div class="pref-actions">
+    <a class="secondary-link" routerLink="/privacy">Open the privacy page</a>
+    <a class="secondary-link" routerLink="/preferences">Preference packs</a>
+  </div>
+</section>
+
+<section class="planner-card">
+  <h2>Delete account</h2>
+  <p>
+    This permanently removes your email, places, sign-in, and saved plans from
+    this copy. A model you chose for planning may already have seen those trip
+    notes.
+  </p>
+  <div class="pref-actions">
+    <button type="button" class="danger-btn" [disabled]="deleting()" (click)="deleteAccount()">
+      {{ deleting() ? 'Deleting…' : 'Delete my account' }}
+    </button>
+  </div>
+  @if (error()) {
+    <p class="auth-error">{{ error() }}</p>
+  }
+</section>

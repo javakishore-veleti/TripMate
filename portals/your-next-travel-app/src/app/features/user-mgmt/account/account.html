@@ -1,120 +1,22 @@
 <section class="hero-section">
   <p class="kicker">Account</p>
-  <h1>Places you live or watch</h1>
-  <p>
-    City, state or region, and a zip if you have one — not a street address.
-    The dashboard asks your model what’s on within the radius you set.
-  </p>
+  <h1>Your account</h1>
+  <p>Places you watch, the briefs that plan your trips, and the privacy you care about.</p>
 </section>
 
-<section class="planner-card">
-  <h2>Up to five places</h2>
-  <p class="request-meta">Signed in as {{ auth.user()?.email }}</p>
-  <form class="place-form" (submit)="$event.preventDefault(); saveProfile()">
-    @for (index of slots; track index) {
-      <fieldset class="place-row">
-        <legend>Place {{ index + 1 }}</legend>
-        <label>
-          City
-          <input [(ngModel)]="places[index].city" [name]="'city' + index" placeholder="Austin" />
-        </label>
-        <label>
-          State / region
-          <input [(ngModel)]="places[index].region" [name]="'region' + index" placeholder="Texas" />
-        </label>
-        <label>
-          ZIP / postal
-          <input [(ngModel)]="places[index].postal_code" [name]="'zip' + index" placeholder="78701" />
-        </label>
-        <label>
-          Country
-          <input [(ngModel)]="places[index].country" [name]="'country' + index" placeholder="USA" />
-        </label>
-      </fieldset>
-    }
-    <label class="radius-field">
-      Event radius (miles)
-      <input type="number" min="25" max="2000" step="25" [(ngModel)]="radius" name="radius" />
-      <small>Default 200. The brief stays inside this circle around each place.</small>
-    </label>
-    <article class="accordion" [class.is-open]="modelOpen()">
-      <button type="button" class="accordion-trigger" (click)="toggleModel()">
-        <span class="accordion-emoji" aria-hidden="true">✨</span>
-        <span class="accordion-copy">
-          <strong>Model for the dashboard brief</strong>
-          <small>Local Ollama is the default. Change it here — not on the dashboard.</small>
-        </span>
-        <span class="accordion-chevron" aria-hidden="true">{{ modelOpen() ? '−' : '+' }}</span>
-      </button>
-      @if (modelOpen()) {
-        <div class="journal-pad">
-          <div class="planner-options">
-            <label class="adapter-field">
-              <span>Model host</span>
-              <select [(ngModel)]="providerId" name="provider" (ngModelChange)="onProviderChange()">
-                @for (provider of providers(); track provider.id) {
-                  <option [value]="provider.id">{{ provider.label }}</option>
-                }
-              </select>
-            </label>
-            <label class="adapter-field adapter-field-wide">
-              <span>Model</span>
-              <select [(ngModel)]="modelId" name="model">
-                @for (model of models(); track model.id) {
-                  <option [value]="model.id">{{ model.label }}</option>
-                }
-              </select>
-            </label>
-            @if (isOllama()) {
-              <label class="adapter-field adapter-field-wide">
-                <span>Local model URL</span>
-                <input type="url" [(ngModel)]="ollamaUrl" name="ollamaUrl" (change)="onOllamaUrlChange()" placeholder="http://127.0.0.1:11434" />
-              </label>
-            }
-          </div>
-          @if (isOllama()) {
-            <p class="ollama-hint">Uses a model on this machine. Pull one with Ollama if the list is empty.</p>
-          }
-        </div>
-      }
-    </article>
-    <div class="pref-actions">
-      <button type="submit" class="primary-link" [disabled]="saving()">
-        {{ saving() ? 'Saving…' : 'Save account' }}
-      </button>
-      <a class="secondary-link" routerLink="/dashboard">Open dashboard</a>
-    </div>
-    @if (saved()) {
-      <p class="pref-saved">{{ saved() }}</p>
-    }
-  </form>
-</section>
+<ul ngbNav [activeId]="activeId" class="nav-tabs account-tabs">
+  <li [ngbNavItem]="'about'">
+    <a ngbNavLink routerLink="about" routerLinkActive="active">About you</a>
+  </li>
+  <li [ngbNavItem]="'places'">
+    <a ngbNavLink routerLink="places" routerLinkActive="active">Places you live or watch</a>
+  </li>
+  <li [ngbNavItem]="'models'">
+    <a ngbNavLink routerLink="models" routerLinkActive="active">Models for your travel briefs</a>
+  </li>
+  <li [ngbNavItem]="'privacy'">
+    <a ngbNavLink routerLink="privacy" routerLinkActive="active">Privacy</a>
+  </li>
+</ul>
 
-<section class="planner-card">
-  <h2>Privacy</h2>
-  <p>
-    Read how this instance stores email, places, prompts, and sessions. Preference
-    packs still live under Preferences.
-  </p>
-  <div class="pref-actions">
-    <a class="secondary-link" routerLink="/privacy">Open the privacy page</a>
-    <a class="secondary-link" routerLink="/preferences">Preference packs</a>
-  </div>
-</section>
-
-<section class="planner-card">
-  <h2>Delete account</h2>
-  <p>
-    This permanently removes your email, password hash, places, sessions, and
-    saved plans from this app’s database. Model providers may already have seen
-    prompts sent during planning.
-  </p>
-  <div class="pref-actions">
-    <button type="button" class="danger-btn" [disabled]="deleting()" (click)="deleteAccount()">
-      {{ deleting() ? 'Deleting…' : 'Delete my account' }}
-    </button>
-  </div>
-  @if (error()) {
-    <p class="auth-error">{{ error() }}</p>
-  }
-</section>
+<router-outlet />

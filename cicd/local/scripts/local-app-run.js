@@ -122,7 +122,7 @@ if (!fs.existsSync(path.join(portalDir, "node_modules"))) {
 }
 
 console.log(`3. Starting FastAPI at ${apiUrl} (Alembic schema upgrade on startup)`);
-start(python, ["app.py", "--host", apiHost, "--port", apiPort], { env: venvEnv() });
+start(python, ["-m", "middleware.app", "--host", apiHost, "--port", apiPort], { env: venvEnv() });
 
 waitForHealth()
   .then(() => {

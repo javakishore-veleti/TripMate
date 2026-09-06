@@ -2,6 +2,7 @@ export interface AppUser {
   id: string;
   email: string;
   display_name: string;
+  last_signin_at?: string | null;
   preferences: UserPreferences;
 }
 
@@ -28,6 +29,16 @@ export interface UserPreferences {
   llm_provider: string;
   llm_model: string;
   llm_base_url: string;
+  llm_jobs: {
+    classify: LlmJobChoice;
+    reason: LlmJobChoice;
+    deep: LlmJobChoice;
+  };
+}
+
+export interface LlmJobChoice {
+  provider: string;
+  model: string;
 }
 
 export interface AreaEvent {
@@ -37,9 +48,28 @@ export interface AreaEvent {
   region: string;
   country: string;
   when: string;
+  day?: string;
   miles_from: number;
   near: string;
   blurb: string;
+}
+
+export interface JournalHappeningsResponse {
+  success: boolean;
+  message?: string;
+  expanded?: boolean;
+  year?: number;
+  month?: number;
+  window?: string;
+  radius_miles?: number;
+  places?: string[];
+  skill_names?: string[];
+  lens?: string;
+  classify_note?: string;
+  events?: AreaEvent[];
+  pack?: string;
+  food?: string;
+  ideas?: string;
 }
 
 export interface AreaEventsResponse {
@@ -81,8 +111,12 @@ export interface TravelResult {
   final_response?: string;
   requires_approval?: boolean;
   approval_request?: string;
+  selected_specialists?: string[];
   selected_agents?: string[];
+  coordinator_notes?: string;
   supervisor_reasoning?: string;
+  request_accepted?: boolean;
+  request_note?: string;
   guardrail_allowed?: boolean;
   guardrail_reason?: string;
   llm_base_url?: string;
@@ -185,4 +219,43 @@ export const EMPTY_PREFERENCES: UserPreferences = {
   llm_provider: 'ollama',
   llm_model: '',
   llm_base_url: '',
+  llm_jobs: {
+    classify: { provider: 'ollama', model: '' },
+    reason: { provider: 'ollama', model: '' },
+    deep: { provider: 'ollama', model: '' },
+  },
 };
+
+export const EMPTY_LLM_JOB: LlmJobChoice = { provider: 'ollama', model: '' };
+
+export const SPECIALIST_LABELS: Record<string, string> = {
+  air_research: 'Flights',
+  stay_research: 'Stays',
+  climate_brief: 'Weather',
+  cost_review: 'Budget',
+  trip_draft: 'Days',
+  flight_agent: 'Flights',
+  hotel_agent: 'Stays',
+  weather_agent: 'Weather',
+  budget_agent: 'Budget',
+  itinerary_agent: 'Days',
+};
+
+export function tripSpecialists(result?: TravelResult | null): string[] {
+  return result?.selected_specialists || result?.selected_agents || [];
+}
+
+export function tripAccepted(result?: TravelResult | null): boolean {
+  if (result?.request_accepted === false || result?.guardrail_allowed === false) {
+    return false;
+  }
+  return true;
+}
+
+export function tripNotes(result?: TravelResult | null): string {
+  return result?.coordinator_notes || result?.supervisor_reasoning || '';
+}
+
+export function specialistLabel(name: string): string {
+  return SPECIALIST_LABELS[name] || name;
+}

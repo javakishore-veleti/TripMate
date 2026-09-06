@@ -67,7 +67,7 @@ sequenceDiagram
     Svc-->>App: ResponseCode
     App->>App: result.prompt = ctx.user_message
     App-->>UI: TravelResponse
-    UI-->>User: Your prompt + plan placeholder
+    UI-->>User: Draft plan for review
 ```
 
 ### 2. Planner service to TravelRequestAgentImpl
@@ -79,20 +79,20 @@ sequenceDiagram
     participant Agents as AgentsObjectFactory
     participant Core as TravelRequestAgentImpl
     participant Adapters as AgenticAdapterObjectFactory
-    participant Graph as TravelPlannerLangGraphAdapter
+    participant Graph as TripComposeAdapter
 
     Svc->>Agents: get_agent(AGENT_TRAVEL_REQUEST)
     Agents-->>Svc: TravelRequestAgentImpl
     Svc->>Core: execute(request, ctx)
     Core->>Core: ctx.user_message = request.message
     Core->>Adapters: get_agentic_adapter(request.agentic_adapter)
-    Adapters-->>Core: TravelPlannerLangGraphAdapter
+    Adapters-->>Core: TripComposeAdapter
     Core->>Graph: execute(request, ctx)
     Graph-->>Core: SUCCESS
     Core-->>Svc: SUCCESS or SKIP
 ```
 
-More diagrams (supervisor, LLM provider): [Docs/Design/TravelReqAgentImpl.md](Docs/Design/TravelReqAgentImpl.md).
+More diagrams (coordinator, LLM provider): [Docs/Design/TravelReqAgentImpl.md](Docs/Design/TravelReqAgentImpl.md).
 
 ## Understanding Python Frameworks
 
@@ -103,14 +103,14 @@ FastAPI is the **application** (routes, validation, responses). Uvicorn is the *
 Your Next Travel starts the API from `app.py` with configurable host and port (defaults: `0.0.0.0` and `8000`):
 
 ```bash
-python app.py
-python app.py --host 0.0.0.0 --port 9000
+python -m middleware.app
+python -m middleware.app --host 0.0.0.0 --port 9000
 ```
 
 Or set `HOST` / `PORT` in the environment or a `.env` file. CLI flags override env. The equivalent Uvicorn CLI is:
 
 ```bash
-uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+uvicorn middleware.app:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 #### How Uvicorn integrates with FastAPI
@@ -124,13 +124,13 @@ Uvicorn and FastAPI are two layers.
   3. FastAPI matches the path, runs your handler, builds a response
   4. Uvicorn writes that response back to the client
 
-`if __name__ == "__main__"` means this only runs when you execute `python app.py`. Importing `app` (tests, or `uvicorn app:app` on the CLI) creates the FastAPI instance but does not start the server twice.
+`if __name__ == "__main__"` means this only runs when you execute `python -m middleware.app`. Importing `app` (tests, or `uvicorn middleware.app:app` on the CLI) creates the FastAPI instance but does not start the server twice.
 
 #### How Uvicorn finds the app object
 
 Uvicorn does not scan the project for FastAPI classes. You point it at **one object** with an import path.
 
-In `app.py` that argument is `"app:app"`:
+In `app.py` that argument is `"middleware.app:app"`:
 
 | Part | Meaning in this repo |
 | --- | --- |
@@ -148,7 +148,7 @@ asgi_app = getattr(module, "app")        # the FastAPI() instance
 
 Then it only talks to that object. Other classes (`TravelPlannerService`, templates, and so on) are used only because your route functions call them.
 
-With `reload=True`, a parent process watches files. A **child** process imports `"app:app"` again after a change. That is why reload needs the string. Passing the in-memory `app` object works without reload, but the reloader cannot re-import it.
+With `reload=True`, a parent process watches files. A **child** process imports `"middleware.app:app"` again after a change. That is why reload needs the string. Passing the in-memory `app` object works without reload, but the reloader cannot re-import it.
 
 If you renamed the instance (for example `api = FastAPI(...)`), you would pass `"app:api"`. If that path is missing or the object is not ASGI-callable, Uvicorn fails — it will not guess another object. The left side stays `app` because that is the **file/module** name, not the variable name.
 
@@ -203,7 +203,7 @@ Related but not ASGI:
 - **WSGI** — still fine for sync Flask/Django
 - **RSGI** — another Python async app interface (Granian); less common
 
-Because FastAPI speaks ASGI, `"app:app"` can be served by any ASGI server, not only Uvicorn.
+Because FastAPI speaks ASGI, `"middleware.app:app"` can be served by any ASGI server, not only Uvicorn.
 
 #### Compared to Tomcat and WebLogic
 

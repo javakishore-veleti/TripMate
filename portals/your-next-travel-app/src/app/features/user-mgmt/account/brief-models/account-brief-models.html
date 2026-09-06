@@ -1,0 +1,76 @@
+<section class="account-tab">
+  <h2>Models for your travel briefs</h2>
+  <p>
+    A model on this machine is the default for every travel brief. Leave a step
+    on default unless you want a different one. A cloud model is only if you pick it.
+  </p>
+  <form class="journal-pad" (submit)="$event.preventDefault(); saveModels()">
+    <div class="planner-options">
+      <label class="adapter-field">
+        <span>Default host</span>
+        <select [(ngModel)]="providerId" name="provider" (ngModelChange)="onProviderChange()">
+          @for (provider of providers(); track provider.id) {
+            <option [value]="provider.id">{{ provider.label }}</option>
+          }
+        </select>
+      </label>
+      <label class="adapter-field adapter-field-wide">
+        <span>Default model</span>
+        <select [(ngModel)]="modelId" name="model">
+          @for (model of models(); track model.id) {
+            <option [value]="model.id">{{ model.label }}</option>
+          }
+        </select>
+      </label>
+      @if (usesOllama()) {
+        <label class="adapter-field adapter-field-wide">
+          <span>Ollama URL</span>
+          <input type="url" [(ngModel)]="ollamaUrl" name="ollamaUrl" (change)="onOllamaUrlChange()" placeholder="http://127.0.0.1:11434" />
+        </label>
+      }
+    </div>
+    @if (usesOllama()) {
+      <p class="ollama-hint">Pull a local model with Ollama if the list is empty. That model is used whenever a job below is left on default.</p>
+    }
+    @for (job of briefJobs; track job.id) {
+      <fieldset class="brief-job">
+        <legend>{{ job.title }}</legend>
+        <p>{{ job.blurb }}</p>
+        <div class="planner-options">
+          <label class="adapter-field">
+            <span>Host</span>
+            <select
+              [(ngModel)]="jobs[job.id].provider"
+              [name]="'jobProvider' + job.id"
+              (ngModelChange)="onJobProviderChange(job.id)"
+            >
+              @for (provider of providers(); track provider.id) {
+                <option [value]="provider.id">{{ provider.label }}</option>
+              }
+            </select>
+          </label>
+          <label class="adapter-field adapter-field-wide">
+            <span>Model</span>
+            <select [(ngModel)]="jobs[job.id].model" [name]="'jobModel' + job.id">
+              <option value="">Use default (Ollama)</option>
+              @for (model of modelsFor(jobs[job.id].provider); track model.id) {
+                <option [value]="model.id">{{ model.label }}</option>
+              }
+            </select>
+          </label>
+        </div>
+      </fieldset>
+    }
+    <div class="pref-actions">
+      <button type="submit" class="primary-link" [disabled]="saving()">
+        {{ saving() ? 'Saving…' : 'Save models' }}
+      </button>
+    </div>
+    @if (saved()) {
+      <p class="pref-saved">{{ saved() }}</p>
+    }
+    @if (error()) {
+      <p class="auth-error">{{ error() }}</p>
+    }
+  </form>
+</section>

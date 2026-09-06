@@ -3,7 +3,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { AreaEventsResponse, LlmCatalog, TravelRequestRecord, TravelResponse } from '../models/api.models';
+import {
+  AreaEventsResponse,
+  JournalHappeningsResponse,
+  LlmCatalog,
+  TravelRequestRecord,
+  TravelResponse,
+} from '../models/api.models';
 import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -12,6 +18,14 @@ export class TravelService {
 
   areaEvents(horizon: string): Observable<AreaEventsResponse> {
     return this.api.post<AreaEventsResponse>('/area-events', { horizon });
+  }
+
+  journalHappenings(payload: {
+    expand?: boolean;
+    year?: number;
+    month?: number;
+  } = {}): Observable<JournalHappeningsResponse> {
+    return this.api.post<JournalHappeningsResponse>('/journal/happenings', payload);
   }
 
   catalog(baseUrl = ''): Observable<LlmCatalog> {

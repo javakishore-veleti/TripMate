@@ -3,7 +3,14 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { TravelRequestRecord, TravelResult } from '../../../core/models/api.models';
+import {
+  TravelRequestRecord,
+  TravelResult,
+  specialistLabel,
+  tripAccepted,
+  tripNotes,
+  tripSpecialists,
+} from '../../../core/models/api.models';
 import { TravelService } from '../../../core/services/travel.service';
 import { ApprovalPanel } from '../../approvals-mgmt/approval-panel/approval-panel';
 import { DeletePlan } from '../delete-plan/delete-plan';
@@ -34,6 +41,22 @@ export class RequestDetail implements OnInit {
       next: (record) => this.show(record),
       error: () => this.error.set('Request not found.'),
     });
+  }
+
+  specialists(result: TravelResult): string[] {
+    return tripSpecialists(result);
+  }
+
+  accepted(result: TravelResult): boolean {
+    return tripAccepted(result);
+  }
+
+  notes(result: TravelResult): string {
+    return tripNotes(result);
+  }
+
+  specialistName(name: string): string {
+    return specialistLabel(name);
   }
 
   tokenLine(): string {

@@ -80,13 +80,13 @@
         <span class="eyebrow">How this draft was built</span>
         <h2>What we looked at</h2>
       </div>
-      <span class="guardrail-badge" [class.blocked]="data.guardrail_allowed === false">
-        {{ data.guardrail_allowed === false ? 'Needs a clearer trip' : 'Ready to review' }}
+      <span class="guardrail-badge" [class.blocked]="!accepted(data)">
+        {{ accepted(data) ? 'Ready to review' : 'Needs a clearer trip' }}
       </span>
     </div>
-    <p class="supervisor-reasoning">{{ data.supervisor_reasoning || 'We picked the pieces this trip needs.' }}</p>
+    <p class="supervisor-reasoning">{{ notes(data) || 'We picked the pieces this trip needs.' }}</p>
     <div class="agent-chips">
-      @for (agent of data.selected_agents || []; track agent) {
+      @for (agent of specialists(data); track agent) {
         <span class="agent-chip">{{ agentLabel(agent) }}</span>
       }
     </div>

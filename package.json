@@ -5,8 +5,8 @@
   "scripts": {
     "local-python-env-activate": "node cicd/local/scripts/local-python-env-activate.js",
     "local-python-env-activate:python": "node cicd/local/scripts/local-python-env-activate.js python",
-    "local:schema-setup": "node cicd/local/scripts/local-python-env-activate.js python -m persistence.schema_setup",
-    "local:api-run": "node cicd/local/scripts/local-python-env-activate.js python app.py --host 127.0.0.1 --port 8000",
+    "local:schema-setup": "node cicd/local/scripts/local-python-env-activate.js python -m middleware.persistence.schema_setup",
+    "local:api-run": "node cicd/local/scripts/local-python-env-activate.js python -m middleware.app --host 127.0.0.1 --port 8000",
     "local:portal-run": "npm --prefix portals/your-next-travel-app start",
     "local:app-run": "node cicd/local/scripts/local-app-run.js",
     "local-python-env-activate:lock": "uv lock"

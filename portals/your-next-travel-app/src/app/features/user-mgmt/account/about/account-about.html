@@ -1,0 +1,16 @@
+<section class="account-tab">
+  <h2>About you</h2>
+  <p>
+    Your email and latest sign-in, as they stand now. These are not edited here.
+  </p>
+  <form class="place-form journal-pad" (submit)="$event.preventDefault()">
+    <label class="radius-field">
+      Email
+      <input [value]="email()" name="email" readonly />
+    </label>
+    <label class="radius-field">
+      Latest sign-in
+      <input [value]="latestSignin()" name="lastSignin" readonly />
+    </label>
+  </form>
+</section>

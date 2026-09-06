@@ -4,19 +4,19 @@ import { FormsModule } from '@angular/forms';
 
 import { Router } from '@angular/router';
 
-import { LlmCatalog, LlmProviderOption, TravelResult } from '../../../core/models/api.models';
+import {
+  LlmCatalog,
+  LlmProviderOption,
+  TravelResult,
+  specialistLabel,
+  tripAccepted,
+  tripNotes,
+  tripSpecialists,
+} from '../../../core/models/api.models';
 import { TravelService } from '../../../core/services/travel.service';
 import { ApprovalPanel } from '../../approvals-mgmt/approval-panel/approval-panel';
 import { DeletePlan } from '../delete-plan/delete-plan';
 import { renderMarkdown, travelAnswer } from './markdown';
-
-const AGENT_LABELS: Record<string, string> = {
-  flight_agent: 'Flights',
-  hotel_agent: 'Stays',
-  weather_agent: 'Weather',
-  budget_agent: 'Budget',
-  itinerary_agent: 'Days',
-};
 
 @Component({
   selector: 'app-plan',
@@ -95,8 +95,20 @@ export class Plan implements OnInit {
     this.message = text;
   }
 
+  specialists(result: TravelResult): string[] {
+    return tripSpecialists(result);
+  }
+
+  accepted(result: TravelResult): boolean {
+    return tripAccepted(result);
+  }
+
+  notes(result: TravelResult): string {
+    return tripNotes(result);
+  }
+
   agentLabel(name: string): string {
-    return AGENT_LABELS[name] || name;
+    return specialistLabel(name);
   }
 
   llmPayload(): Record<string, string> {

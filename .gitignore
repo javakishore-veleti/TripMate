@@ -153,6 +153,8 @@ data/*.db
 data/*.db-journal
 data/*.db-wal
 data/*.db-shm
+runtime-data/local-deploy/*
+!runtime-data/local-deploy/.gitkeep
 
 # Local retired-repo git backup (do not publish)
 .git-old-backup/

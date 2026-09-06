@@ -1,5 +1,0 @@
-from adapters.agentic.langgraph.dashboard.places_planner.tasks.this_month import this_month_task
-from adapters.agentic.langgraph.dashboard.places_planner.tasks.this_quarter import this_quarter_task
-from adapters.agentic.langgraph.dashboard.places_planner.tasks.this_week import this_week_task
-
-__all__ = ["this_week_task", "this_month_task", "this_quarter_task"]
