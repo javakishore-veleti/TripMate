@@ -1,12 +1,32 @@
 # Your Next Travel
 
 <p align="center">
-  <img src="Docs/images/your-next-travel-banner.png" alt="Your Next Travel — a travel portal you run. Your keys. Your data. Your next trip." width="100%">
+  <img src="Docs/Assets/repo-banner-readme.png" alt="Your Next Travel — plan the next trip at your table. The cities you watch stay in view." width="100%">
 </p>
 
-**Your Travel Portal (YTP)** is the project. **Your Next Travel** is the product you open in the browser.
+<p align="center">
+  <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License: Apache 2.0">
+  <img src="https://img.shields.io/badge/You_run_it-your_laptop_or_your_cloud-0B6E4F" alt="You run it">
+  <img src="https://img.shields.io/badge/Data-stays_on_your_machine-1B4965" alt="Data stays on your machine">
+  <img src="https://img.shields.io/badge/Drafts-you_review_every_plan-CA6702" alt="You review every plan">
+  <img src="https://img.shields.io/badge/Not_a_booking_site-you_keep_the_keys-6D597A" alt="Not a booking site">
+  <img src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/Angular-DD0031?logo=angular&logoColor=white" alt="Angular">
+  <img src="https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white" alt="FastAPI">
+  <img src="https://img.shields.io/badge/LangGraph-1C3C3C" alt="LangGraph">
+  <img src="https://img.shields.io/badge/SQLite_or_Postgres-003B57" alt="SQLite or Postgres">
+  <img src="https://img.shields.io/badge/Ollama_or_Groq-111111" alt="Ollama or Groq">
+</p>
 
-It is a travel portal **you** run. Watch the cities you care about, read what is happening nearby, and draft a trip you can review before you go. The project authors do not host your account. Your places, preference packs, drafts, and keys stay on your laptop or on a cloud you own.
+**A travel portal you run yourself.** Watch the cities you care about, read what is on nearby, and draft a trip you can sit with — then approve it, change it, or delete it. The project authors do not host your account.
+
+**Your Travel Portal (YTP)** is the project. **Your Next Travel** is the name you see in the browser. Your places, preference packs, drafts, and keys stay on your laptop or on a cloud you own.
+
+> **You run it.** There is no hosted Your Next Travel. Clone it, start it, and the portal is yours.
+
+> **Your data stays with you.** Preference packs and the local database live under `runtime-data/local-deploy/` on the machine you chose. They are not in this git repository.
+
+> **A planner, not a booking site.** You review every draft. Nothing is purchased or reserved for you. You keep the keys.
 
 ## Table of contents
 
@@ -19,6 +39,7 @@ It is a travel portal **you** run. Watch the cities you care about, read what is
   - [Draft a trip and review it](#draft-a-trip-and-review-it)
   - [Keep the privacy you care about](#keep-the-privacy-you-care-about)
 - [How to use it](#how-to-use-it)
+- [How it's built (short)](#how-its-built-short)
 - [Local development](#local-development)
 - [Request flow](#request-flow)
   - [1. User to the API to the planner service](#1-user-to-the-api-to-the-planner-service)
@@ -102,6 +123,21 @@ Run it at home, or on AWS, Azure, GCP, or another cloud **you** own. You keep th
 7. When you want a clean slate, delete the plan or the account from Account → Privacy.
 
 That is the whole traveler loop. The rest of this README is for people who run or change the software.
+
+## How it's built (short)
+
+Enough to know what you are running, not a stack tour:
+
+| You see | What is underneath |
+| --- | --- |
+| The portal in the browser | Angular |
+| Sign-in, places, drafts, journal | FastAPI under `middleware/` |
+| The trip draft you review | LangGraph specialists (air, stays, climate, cost) |
+| Briefs and nearby happenings | The same models you picked on Account |
+| Your data | SQLite by default, or Postgres if you set a URL |
+| The writing | Ollama on this machine, or Groq if you bring your own key |
+
+A later Google ADK adapter can sit beside LangGraph. The portal and your account do not change.
 
 ## Local development
 
