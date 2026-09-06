@@ -1,0 +1,151 @@
+city,region,country,match_keys,months,name,kind,when,blurb
+New York,NY,USA,"new york|nyc",1,Winter restaurant week,season,January,Prix-fixe menus and cold-night walks in Midtown.
+New York,NY,USA,"new york|nyc",1,Winter Jazzfest,festival,January,Clubs from the Village to Brooklyn trade sets until late.
+New York,NY,USA,"new york|nyc",2,Lunar New Year in Flushing,festival,February,Lion dances and dumpling lines in Queens — not just Chinatown.
+New York,NY,USA,"new york|nyc",3,Cherry blossoms in Brooklyn,season,Late March,Pink walks at the botanic garden. Bring a picnic cloth.
+New York,NY,USA,"new york|nyc",4,Sakura Matsuri weekend,festival,Late April,Taiko and street food under the last Brooklyn blossoms.
+New York,NY,USA,"new york|nyc",5,Washington Square outdoor jazz,community,May,Free sets as the park thaws. Sit on the fountain rim.
+New York,NY,USA,"new york|nyc",6,Puerto Rican Day weekend,festival,Second Sunday in June,Flags on Fifth and music that follows you downtown.
+New York,NY,USA,"new york|nyc",6,SummerStage in the parks,festival,June,Free concerts in Central Park and the borough greens.
+New York,NY,USA,"new york|nyc",7,Lincoln Center Out of Doors,culture,July,Dance and orchestras on the plaza. No ticket required.
+New York,NY,USA,"new york|nyc",8,Harlem Week,festival,August,Uptown food, film, and a parade the rest of the city misses.
+New York,NY,USA,"new york|nyc",9,Feast of San Gennaro,festival,Mid-September,Little Italy’s street-sausage days. Older than the tourist menus.
+New York,NY,USA,"new york|nyc",9,New York Fashion Week,culture,September,Runways and pop-ups. The sidewalks dress up after dark.
+New York,NY,USA,"new york|nyc",9,US Open finale week,festival,Early September,Night tennis in Queens. The 7 train stays loud after the match.
+New York,NY,USA,"new york|nyc",9,Atlantic Antic,community,Late September,Brooklyn’s longest street fair — antiques, jerk, and stoop watching.
+New York,NY,USA,"new york|nyc",10,Open House New York,culture,October,Buildings you cannot usually enter open for a weekend.
+New York,NY,USA,"new york|nyc",10,Village Halloween Parade,festival,31 October,Puppets down Sixth Avenue. Wear something you can walk in.
+New York,NY,USA,"new york|nyc",10,New England color from the city,season,October,Leaves and apple stands. An easy weekend hop up the Hudson.
+New York,NY,USA,"new york|nyc",11,New York City Marathon,festival,First Sunday in November,The five-borough run finishes in Central Park. Book stays early.
+New York,NY,USA,"new york|nyc",11,Thanksgiving parade week,culture,Late November,Balloons, windows, and tables that run late.
+New York,NY,USA,"new york|nyc",12,Holiday windows and markets,season,December,Lights on Fifth and cocoa in the stalls — plus Dyker Heights after dark.
+San Francisco,CA,USA,"san francisco|sf",2,Chinese New Year Parade,festival,February,Chinatown’s night parade — firecrackers and the golden dragon.
+San Francisco,CA,USA,"san francisco|sf",4,Cherry Blossom Festival in Japantown,festival,April,Taiko, mochi, and Peace Plaza lanterns most travelers skip.
+San Francisco,CA,USA,"san francisco|sf",5,Bay to Breakers,festival,Third Sunday in May,Costumes from the Embarcadero to Ocean Beach.
+San Francisco,CA,USA,"san francisco|sf",6,North Beach Festival,community,June,The Italian neighborhood’s street weekend — not Fisherman’s Wharf.
+San Francisco,CA,USA,"san francisco|sf",8,Outside Lands,festival,August,Golden Gate Park music. Fog is part of the ticket.
+San Francisco,CA,USA,"san francisco|sf",9,Folsom Street Fair,festival,Last Sunday in September,The city’s boldest street day. Leather, music, and sun.
+San Francisco,CA,USA,"san francisco|sf",9,Mid-Autumn in Chinatown,festival,September,Mooncakes and lanterns a week the rest of the country misses.
+San Francisco,CA,USA,"san francisco|sf",10,Hardly Strictly Bluegrass,festival,Early October,Free stages in the park. Bring a jacket and a blanket.
+San Francisco,CA,USA,"san francisco|sf",10,Fleet Week,festival,October,Jets over the Bay. Watch from the Marina Green.
+San Francisco,CA,USA,"san francisco|sf",10,Italian Heritage Parade,community,October,North Beach’s older civic day — marching bands and cannoli.
+San Francisco,CA,USA,"san francisco|sf",11,Día de los Muertos in the Mission,culture,Early November,Altars on 24th Street. Tender more than touristy.
+Jaipur,Rajasthan,India,"jaipur|rajasthan",1,Makar Sankranti kite skies,festival,14 January,The rooftops fill with kites. Look up from the bazaars.
+Jaipur,Rajasthan,India,"jaipur|rajasthan",3,Holi in Jaipur,festival,March,Color, drums, and clothes you can ruin happily.
+Jaipur,Rajasthan,India,"jaipur|rajasthan",3,Gangaur festival,culture,March–April,Women in ivory and red walk the old city for Gauri.
+Jaipur,Rajasthan,India,"jaipur|rajasthan",4,Elephant Festival days,culture,April,Decorated processions around Holi week — local, not a theme park.
+Jaipur,Rajasthan,India,"jaipur|rajasthan",8,Teej monsoon swing,festival,July–August,Green after the rains. Swings, mehndi, and folk nights.
+Jaipur,Rajasthan,India,"jaipur|rajasthan",9,Jaipur after the rains,season,September,Palaces look washed. Evenings get walkable again.
+Jaipur,Rajasthan,India,"jaipur|rajasthan",10,Diwali lights,festival,October–November,Lamps on every ledge. The Pink City stays up late.
+Jaipur,Rajasthan,India,"jaipur|rajasthan",11,Pushkar Camel Fair,culture,November,Desert market nights an easy hop from Jaipur.
+Jaipur,Rajasthan,India,"jaipur|rajasthan",12,Jaipur Literature Festival week,culture,January nearby / winter season,Talks and tents — book the winter window if you like a crowd of readers.
+Bangkok,,Thailand,"bangkok",2,Yaowarat Chinese New Year,festival,January–February,Gold street and lion dances in the old Chinese quarter.
+Bangkok,,Thailand,"bangkok",4,Songkran,festival,13–15 April,Water in the streets. Smile and expect to get soaked.
+Bangkok,,Thailand,"bangkok",7,Asanha Bucha and Khao Phansa,culture,July,Candle processions as Buddhist Lent begins. Temples glow.
+Bangkok,,Thailand,"bangkok",9,Vegetarian Festival,festival,September–October,Yellow flags and night stalls. Eat your way through Yaowarat.
+Bangkok,,Thailand,"bangkok",10,Awk Phansa river boats,culture,October,End of Lent. Illuminated boats on the river upcountry and in town.
+Bangkok,,Thailand,"bangkok",11,Loy Krathong lights,festival,November,Lanterns on the river. The city turns tender after dark.
+Bangkok,,Thailand,"bangkok",12,King’s Birthday illuminations,culture,5 December,Ratchadamnoen lights. A civic night most visitors walk past.
+Paris,,France,"paris",1,Soldes d’hiver,season,January,The winter sales. Haussmann windows and quieter museums.
+Paris,,France,"paris",5,Nuit des Musées,culture,May,One Saturday the museums stay open late and often free.
+Paris,,France,"paris",6,Fête de la Musique,festival,21 June,Free concerts on every corner. Stay out later than planned.
+Paris,,France,"paris",7,Paris Plages,season,July,The Seine gets a fake beach. Locals actually use it.
+Paris,,France,"paris",9,Journées du Patrimoine,culture,Mid-September,Doors open in palaces and ministries. Walk in for free.
+Paris,,France,"paris",9,Fête des Vendanges de Montmartre,festival,Second weekend of October nearby / late September start,The hill still has a vineyard. Parades and juice you can taste.
+Paris,,France,"paris",9,Techno Parade,festival,September,A moving sound-system day most guidebooks skip.
+Paris,,France,"paris",10,Nuit Blanche,culture,First Saturday of October,All-night art in courtyards and stations.
+Paris,,France,"paris",12,Christmas markets on the Seine,season,December,Lights, vin chaud, and windows that glow.
+Barcelona,,Spain,"barcelona",3,Las Fallas nearby,festival,March,Fire and sculptures in Valencia. A short hop from Barcelona.
+Barcelona,,Spain,"barcelona",4,Sant Jordi,culture,23 April,Roses and books in the streets. Catalonia’s gentlest big day.
+Barcelona,,Spain,"barcelona",6,Sant Joan night,festival,23 June,Bonfires on the beach. Stay for the fireworks at midnight.
+Barcelona,,Spain,"barcelona",8,Festes de Gràcia,community,Mid-August,Neighborhood streets become paper sculptures. Locals’ favorite week.
+Barcelona,,Spain,"barcelona",9,La Diada,culture,11 September,Catalonia’s national day. Flags, walks, and a city that talks politics in the plazas.
+Barcelona,,Spain,"barcelona",9,La Mercè,festival,Late September,Human towers, fireworks, and the city’s biggest street party.
+Barcelona,,Spain,"barcelona",9,Castellers on the plaza,culture,September,Human towers at Mercè and neighborhood dates. Look up and be quiet.
+Cairo,,Egypt,"cairo|giza",1,Cairo International Book Fair,culture,January–February,The Arab world’s biggest book gathering at Egypt International Exhibition Center.
+Cairo,,Egypt,"cairo|giza",4,Sham El-Nessim,season,Monday after Coptic Easter,Spring picnic day. Colored eggs and salted fish by the Nile.
+Cairo,,Egypt,"cairo|giza",2,Abu Simbel sun alignment hop,culture,22 February,A dawn of light in the far south — plan from Cairo if you like a pilgrimage.
+Cairo,,Egypt,"cairo|giza",9,Nile evenings after summer,season,September,The heat eases. Feluccas and late coffee come back.
+Cairo,,Egypt,"cairo|giza",10,Moulid of Sayyida Zaynab,culture,Islamic calendar / autumn often,Sufi nights around the mosque. Ask locally for the week.
+Cairo,,Egypt,"cairo|giza",10,Cairo cultural season,culture,Autumn,Shows, galleries, and walks in Islamic Cairo when the air is kind.
+Cairo,,Egypt,"cairo|giza",10,Abu Simbel October sun,culture,22 October,The second alignment date. Same temple, cooler flight south.
+Amman,,Jordan,"amman|jerash",6,Jerash Festival of Culture,festival,July–August often overlapping,Roman streets become a stage. Easy evening from Amman.
+Amman,,Jordan,"amman|jerash",7,Souk Jara summer nights,community,June–August,Thursday craft market in Jabal Amman. Tea and live sets.
+Amman,,Jordan,"amman|jerash",9,Amman’s golden evenings,season,September,Cooler nights, rooftop tea, and day trips to Jerash.
+Amman,,Jordan,"amman|jerash",10,Jerash and the road north,culture,Autumn,Roman streets in clear light. The tourist buses thin a little.
+Amman,,Jordan,"amman|jerash",11,Olive harvest weekends,season,November,Hills west of town smell like presses. Ask for a village lunch.
+Dubai,,UAE,"dubai",1,Dubai Shopping Festival,festival,December–January,Night shows and souk hours that run late.
+Dubai,,UAE,"dubai",2,Dubai Food Festival,festival,February–March,Neighborhood tables, not only hotel buffets.
+Dubai,,UAE,"dubai",3,Art Dubai week,culture,March,Madinat Jumeirah tents and Alserkal openings.
+Dubai,,UAE,"dubai",3,Sikka Art Fair,culture,March,Al Fahidi lanes — the older Dubai most skyline photos skip.
+Dubai,,UAE,"dubai",9,Season opening in Dubai,season,September,The air finally lets you walk. Beaches and souks wake up.
+Dubai,,UAE,"dubai",11,Global Village evenings,festival,November–April,Pavilions and street food. Go after sunset.
+Dubai,,UAE,"dubai",12,Dubai winter nights,festival,December,Markets, lights, and dinners that run past midnight.
+Abu Dhabi,,UAE,"abu dhabi|yas",1,Qasr Al Hosn Festival,culture,February often,The old fort becomes a living heritage ground.
+Abu Dhabi,,UAE,"abu dhabi|yas",2,Liwa Date Festival hop,culture,July is harvest / winter exhibitions,Date culture in the oasis — a different UAE than the corniche.
+Abu Dhabi,,UAE,"abu dhabi|yas",9,Abu Dhabi outdoor season,season,September,Corniche walks and Louvre evenings without the worst heat.
+Abu Dhabi,,UAE,"abu dhabi|yas",11,Abu Dhabi Grand Prix week,festival,November,Yas nights, music, and a city that stays dressed up.
+Abu Dhabi,,UAE,"abu dhabi|yas",11,Louvre Abu Dhabi late Thursdays,culture,Autumn–spring,Dome light after office hours. The rain of light is the show.
+Tokyo,,Japan,"tokyo",1,Hatsumode at Meiji or Senso-ji,culture,1–3 January,First shrine visit. Warm amazake in the queue.
+Tokyo,,Japan,"tokyo",2,Setsubun at Senso-ji,culture,3 February,Bean-throwing to chase winter. Crowds and roasted soy.
+Tokyo,,Japan,"tokyo",4,Cherry blossom weeks,season,Late March–April,Hanami along the Meguro and Ueno. Book stays early.
+Tokyo,,Japan,"tokyo",5,Sanja Matsuri,festival,Third weekend of May,Asakusa’s portable-shrine chaos. The local one.
+Tokyo,,Japan,"tokyo",7,Sumida River Fireworks,festival,Last Saturday of July,Yukata and a plastic sheet on the riverbank.
+Tokyo,,Japan,"tokyo",8,Koenji Awa Odori,festival,Late August,Dance teams in the west. Tokyo’s neighborhood Obon.
+Tokyo,,Japan,"tokyo",11,Momiji in the city parks,season,November,Maples at Rikugien at night. The mountain reds come first.
+Kyoto,,Japan,"kyoto",4,Hanami in Kyoto,season,April,Philosopher’s Path pink. Go at dawn or after the tour buses.
+Kyoto,,Japan,"kyoto",5,Aoi Matsuri,culture,15 May,An older imperial parade. Quiet compared with Gion.
+Kyoto,,Japan,"kyoto",7,Gion Matsuri,festival,July,Floats, yukata, and Kyoto’s summer night streets.
+Kyoto,,Japan,"kyoto",8,Gozan no Okuribi,culture,16 August,Hillside bonfires send ancestors home. Watch from the river.
+Kyoto,,Japan,"kyoto",10,Jidai Matsuri,culture,22 October,A costume walk through eras. Book the autumn window.
+Kyoto,,Japan,"kyoto",11,Momiji season,season,November,Maple reds from the hills into the city temples.
+London,,UK,"london",4,Thames Barrier openings / spring tides,season,April,A civic engineering day if the river is high — odd and local.
+London,,UK,"london",5,Bank-holiday Britain,season,May,Long weekends, parks, and trains to the coast.
+London,,UK,"london",8,Notting Hill Carnival,festival,August bank holiday,Sound systems and rice-and-peas. Go Sunday for steelpan.
+London,,UK,"london",9,Open House London,culture,September,Architects unlock buildings you cannot usually enter.
+London,,UK,"london",9,Totally Thames,festival,September,River pageants and foreshore walks at low tide.
+London,,UK,"london",11,Lord Mayor’s Show,culture,Second Saturday in November,Gold coach and livery guilds. The City’s own parade.
+Rome,,Italy,"rome",2,Carnevale nearby in the hills,festival,February,Masks closer than Venice if you only have a Rome stay.
+Rome,,Italy,"rome",4,Easter in Rome,culture,March–April,Processions and packed piazzas. Quiet Tuesday after is a gift.
+Rome,,Italy,"rome",6,Estate Romana,culture,June–August,Night concerts in ruins. The city’s summer program.
+Rome,,Italy,"rome",8,Ferragosto hush,season,15 August,Rome empties. Fountains and a table if you booked.
+Rome,,Italy,"rome",9,Vendemmia in the Castelli,season,September,Grape harvest in the hills. An easy train from Termini.
+Mexico City,,Mexico,"mexico city|cdmx",4,Feria de las Flores in Xochimilco,festival,April,Trajineras and flowers south of the centro.
+Mexico City,,Mexico,"mexico city|cdmx",9,Independence nights,festival,15–16 September,El Grito, flags, and plazas that stay loud past midnight.
+Mexico City,,Mexico,"mexico city|cdmx",10,Día de Muertos,culture,Late October–2 November,Altars, marigolds, and a night that is tender more than scary.
+Mexico City,,Mexico,"mexico city|cdmx",11,Day of the Virgin of Guadalupe,culture,12 December nearby / pilgrim week,Villa de Guadalupe fills before dawn. A living pilgrimage.
+Austin,TX,USA,"austin",3,SXSW,festival,March,Music, film, and badge lines. Book if you like a crowded week.
+Austin,TX,USA,"austin",4,Austin Reggae Fest,festival,April,Auditorium Shores. A local weekend SXSW overshadows.
+Austin,TX,USA,"austin",10,Austin City Limits,festival,October,Zilker Park weekends. Two identical lineups if you pick dates.
+Austin,TX,USA,"austin",10,Bat season on the Congress Bridge,season,August–October,Dusk flights. Free and still surprising.
+New Orleans,LA,USA,"new orleans|nola",2,Mardi Gras,festival,February–March,Krewes and king cake. Pick a neighborhood, not only Bourbon.
+New Orleans,LA,USA,"new orleans|nola",4,French Quarter Festival,festival,April,Free stages. Locals call it the better Jazz Fest warm-up.
+New Orleans,LA,USA,"new orleans|nola",5,Jazz Fest,festival,Late April–May,The Fair Grounds. Congo Square is the soul of the weekend.
+New Orleans,LA,USA,"new orleans|nola",10,Voodoo season and Halloween,festival,October,Second-line energy without the spring crush.
+Chicago,IL,USA,"chicago",3,St. Patrick’s river green,festival,Saturday before 17 March,The river goes green. Stay for the South Side parade the next day.
+Chicago,IL,USA,"chicago",6,Printers Row Lit Fest,culture,June,A bookish weekend most food tourists miss.
+Chicago,IL,USA,"chicago",9,World Music Festival,festival,September,Free neighborhood venues. Not Lollapalooza.
+Chicago,IL,USA,"chicago",10,Open House Chicago,culture,October,Interiors you cannot usually see. Architecture city’s secret weekend.
+Edinburgh,,UK,"edinburgh",8,Edinburgh Festival Fringe,festival,August,The whole city is a venue. Book beds months out.
+Edinburgh,,UK,"edinburgh",10,Harvest weekends,season,September–October,Markets, wool, and walks that want a jacket by late afternoon.
+Edinburgh,,UK,"edinburgh",12,Hogmanay,festival,31 December,Edinburgh’s new year. Book if you like a crowd that sings.
+Marrakech,,Morocco,"marrakech",5,Rose season in the south,season,April–May,Valleys toward Kelaat M’Gouna smell like the souk before the heat.
+Marrakech,,Morocco,"marrakech",6,Gnaoua Festival hop to Essaouira,festival,Late June,A coast weekend of trance and brass. Easy bus from Marrakech.
+Marrakech,,Morocco,"marrakech",9,Date harvest on the road to the desert,season,September–October,Oases south of town. Slower than the Jemaa.
+Istanbul,,Türkiye,"istanbul",3,Istanbul Film Festival,culture,April often,Screenings across Beyoğlu. A cinephile week.
+Istanbul,,Türkiye,"istanbul",5,Hidrellez in Ahırkapı,festival,5 May,Roma spring night by the walls. Music until dawn.
+Istanbul,,Türkiye,"istanbul",9,Istanbul Biennial years,culture,Autumn in odd or even years,Contemporary work in unexpected buildings.
+Istanbul,,Türkiye,"istanbul",10,Autumn on the Bosphorus,season,October,Tea houses and ferries without the August crush.
+Singapore,,Singapore,"singapore",1,Chingay Parade,festival,January–February,The civic answer to Lunar New Year. Floats on the downtown streets.
+Singapore,,Singapore,"singapore",7,Singapore Food Festival,festival,July,Hawker takeovers. Eat where office workers queue.
+Singapore,,Singapore,"singapore",8,National Day fireworks,culture,9 August,Padang and the bay. Book a waterfront table or a rooftop.
+Singapore,,Singapore,"singapore",10,Deepavali in Little India,festival,October–November,Lights on Serangoon. The quieter sister to Orchard Christmas.
+Lisbon,,Portugal,"lisbon",6,Santos Populares,festival,12–13 June,Sardines, manjerico, and marches in Alfama for Santo António.
+Lisbon,,Portugal,"lisbon",9,Lisbon under the late-summer light,season,September,The heat breaks. Tram 28 is still a circus; go early.
+Lisbon,,Portugal,"lisbon",11,São Martinho roast-chestnut days,season,11 November,Água-pé and chestnuts. A small civic sweet.
+Mumbai,,India,"mumbai",8,Ganesh Chaturthi,festival,August–September,Processions to the sea. Mumbai is electric; Pune too.
+Mumbai,,India,"mumbai",9,Ganesh visarjan weekend,festival,Anant Chaturdashi,The last immersions. Chowpatty at dusk.
+Mumbai,,India,"mumbai",10,Navratri garba nights,festival,September–October,Nine nights of dance in the suburbs. Ask a friend for a venue.
+Chiang Mai,,Thailand,"chiang mai",4,Songkran in the north,festival,April,Moat water fights with a little more room than Bangkok.
+Chiang Mai,,Thailand,"chiang mai",11,Yi Peng and Loy Krathong,festival,November,Lanterns over the city and krathongs on the Ping.
+Chiang Mai,,Thailand,"chiang mai",12,Cool-season mornings,season,November–February,Temple walks and night markets without the heaviest heat.

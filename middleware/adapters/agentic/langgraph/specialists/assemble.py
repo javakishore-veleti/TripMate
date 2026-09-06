@@ -1,6 +1,7 @@
 from langchain_core.messages import AIMessage
 
 from middleware.adapters.agentic.langgraph.llm_text import PLAN_MAX_TOKENS, complete_text, specialist_notes
+from middleware.adapters.agentic.langgraph.runtime import brief_failure
 from middleware.common.dtos import TravelState
 from middleware.common.log import get_logger
 
@@ -70,9 +71,13 @@ Be practical. Say when fares or forecasts are estimates. Use revision notes when
         final_response = notes["itinerary"] or (
             "The final plan could not be polished just now. Please retry in a minute."
         )
+        failure = brief_failure(state, "plan_assemble", exc)
+    else:
+        failure = {}
     logger.info("plan_assemble finished")
     return {
         "final_response": final_response,
         "messages": [AIMessage(content=final_response)],
         "llm_calls": state.get("llm_calls", 0) + 1,
+        **failure,
     }

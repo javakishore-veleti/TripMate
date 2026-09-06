@@ -21,6 +21,23 @@ def ollama_default_model() -> str:
     return (os.getenv("OLLAMA_MODEL") or "").strip()
 
 
+_SKIP_MODELS = ("embed", "nomic", "codellama", "guard")
+_CHAT_FIRST = ("llama3.2", "llama3", "gemma", "qwen", "mistral", "phi")
+
+
+def prefer_chat_model(model_ids: list[str]) -> str:
+    usable = [
+        name
+        for name in model_ids
+        if name and not any(skip in name.lower() for skip in _SKIP_MODELS)
+    ]
+    for prefix in _CHAT_FIRST:
+        for name in usable:
+            if name.lower().startswith(prefix):
+                return name
+    return usable[0] if usable else (model_ids[0] if model_ids else "")
+
+
 def configured_ollama_models() -> list[str]:
     raw = (os.getenv("OLLAMA_MODELS") or "").strip()
     names = [part.strip() for part in raw.split(",") if part.strip()]

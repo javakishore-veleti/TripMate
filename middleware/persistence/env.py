@@ -5,6 +5,7 @@ from sqlalchemy import engine_from_config, pool
 
 from middleware.persistence.base import Base
 from middleware.modules.plans_mgmt.persistence import entities as _plan_entities  # noqa: F401
+from middleware.modules.shared.persistence import entities as _shared_entities  # noqa: F401
 from middleware.modules.user_mgmt.persistence import entities as _user_entities  # noqa: F401
 from middleware.persistence.settings import database_url
 

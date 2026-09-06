@@ -9,6 +9,12 @@
     }
     A brief for {{ firstName() }}, not a ticket feed.
   </p>
+  @if (placeNotice()) {
+    <p class="side-note">{{ placeNotice() }}</p>
+  }
+  @if (cached()) {
+    <p class="side-note">Showing the last stored brief.</p>
+  }
   <div class="horizon-tabs" role="tablist" aria-label="Time window">
     <button type="button" [class.is-on]="horizon() === 'week'" (click)="setHorizon('week')" [disabled]="asking()">This week</button>
     <button type="button" [class.is-on]="horizon() === 'month'" (click)="setHorizon('month')" [disabled]="asking()">This month</button>
@@ -31,18 +37,16 @@
 <section class="moment-block">
   <p class="kicker">{{ windowNote() || windowLabel() }}</p>
   <h2 class="moment-heading">Popular events near your places</h2>
-  @if (!places().length) {
-    <section class="planner-card">
-      <p>The brief needs cities, not a street address. Add them on your account, then ask this week, month, or quarter.</p>
-      <div class="pref-actions">
-        <a class="primary-link" routerLink="/account/places">Add places</a>
-      </div>
-    </section>
-  } @else if (asking()) {
-    <section class="planner-card"><p>Looking around your places…</p></section>
+  @if (asking()) {
+    <section class="planner-card"><p>Working on these nearby briefs.</p></section>
   } @else if (askError()) {
     <p class="auth-error">{{ askError() }}</p>
   } @else if (cards().length) {
+    @if (modelHint(); as hint) {
+      <p class="side-note">
+        {{ hint.before }}<a routerLink="/account/models">{{ hint.link }}</a>{{ hint.after }}
+      </p>
+    }
     <section class="moment-grid">
       @for (event of cards(); track event.name + event.near) {
         <article class="moment-card">
@@ -66,6 +70,10 @@
         </article>
       }
     </section>
+  } @else if (modelHint(); as hint) {
+    <p class="side-note">
+      {{ hint.before }}<a routerLink="/account/models">{{ hint.link }}</a>{{ hint.after }}
+    </p>
   } @else {
     <section class="planner-card">
       <p>Choose this week, this month, or this quarter.</p>
@@ -81,9 +89,9 @@
         <strong>Places you’ve started planning</strong>
         <small>
           @if (loading()) {
-            Looking up your drafts…
+            Working on your drafts.
           } @else if (trips().length) {
-            {{ trips().length }} in the journal
+            {{ trips().length }} in My Trips Journal
           } @else {
             No drafts yet
           }
@@ -116,7 +124,7 @@
           }
         </section>
         <p class="journal-more">
-          <a routerLink="/trip-journal">Open the full trip journal →</a>
+          <a routerLink="/trip-journal">Open My Trips Journal →</a>
         </p>
       } @else if (!loading()) {
         <p class="journal-pad">

@@ -6,7 +6,12 @@ from sqlalchemy.exc import IntegrityError
 from middleware.common.jwt_tokens import create_access_token, decode_access_token
 from middleware.common.security import hash_password, verify_password
 from middleware.common.user_preferences import empty_preferences, normalize_preferences
-from middleware.modules.shared.persistence.dao.dao_names import DAO_APP_SESSION, DAO_APP_USER, DAO_TRAVEL_REQUEST
+from middleware.modules.shared.persistence.dao.dao_names import (
+    DAO_APP_SESSION,
+    DAO_APP_USER,
+    DAO_DRAFT_PLAN,
+    DAO_TRAVEL_REQUEST,
+)
 from middleware.modules.shared.persistence.dao.objects import DaoObjectFactory
 
 SESSION_DAYS = 14
@@ -31,6 +36,7 @@ class AuthService:
         self._users = DaoObjectFactory.get_dao(DAO_APP_USER)
         self._sessions = DaoObjectFactory.get_dao(DAO_APP_SESSION)
         self._requests = DaoObjectFactory.get_dao(DAO_TRAVEL_REQUEST)
+        self._drafts = DaoObjectFactory.get_dao(DAO_DRAFT_PLAN)
 
     def signup(self, email: str, password: str, display_name: str = "") -> dict:
         cleaned_email = email.strip().lower()
@@ -113,6 +119,7 @@ class AuthService:
         return self._public_user(updated)
 
     def delete_account(self, user_id: str) -> None:
+        self._drafts.delete_for_user(user_id)
         self._requests.delete_for_user(user_id)
         self._sessions.delete_for_user(user_id)
         if not self._users.delete(user_id):

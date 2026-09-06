@@ -1,6 +1,7 @@
 from langchain_core.messages import AIMessage
 
 from middleware.adapters.agentic.langgraph.llm_text import PLAN_MAX_TOKENS, complete_text, specialist_notes
+from middleware.adapters.agentic.langgraph.runtime import brief_failure
 from middleware.common.dtos import TravelState
 from middleware.common.log import get_logger
 
@@ -47,13 +48,24 @@ Keep it easy to follow and under 450 words.
             "A full draft could not be written just now. Use the research notes "
             "above and ask the traveler to retry in a minute."
         )
+        failure = brief_failure(state, "trip_draft", exc)
+    else:
+        failure = {}
     logger.info("trip_draft finished")
+    approval = (
+        "Review this draft. Approve it to polish the final plan, or send "
+        "notes for a revision."
+    )
     return {
         "itinerary": itinerary,
-        "approval_request": (
-            "Review this draft. Approve it to polish the final plan, or send "
-            "notes for a revision."
-        ),
+        "approval_request": approval,
+        "proposed_action": {
+            "kind": "approve_draft",
+            "risk_level": "review",
+            "draft_itinerary": itinerary,
+            "approval_request": approval,
+        },
         "messages": [AIMessage(content="Trip draft is ready for review.")],
         "llm_calls": state.get("llm_calls", 0) + 1,
+        **failure,
     }

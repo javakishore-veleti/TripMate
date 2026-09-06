@@ -1,6 +1,7 @@
 from langchain_core.messages import AIMessage
 
 from middleware.adapters.agentic.langgraph.llm_text import complete_text, specialist_notes
+from middleware.adapters.agentic.langgraph.runtime import brief_failure
 from middleware.common.dtos import TravelState
 from middleware.common.log import get_logger
 
@@ -49,9 +50,13 @@ Keep it under 220 words. Label missing live prices as estimates.
             "Cost review is unavailable right now. Treat air and stay figures "
             "as estimates and keep the draft conservative."
         )
+        failure = brief_failure(state, "cost_review", exc)
+    else:
+        failure = {}
     logger.info("cost_review finished")
     return {
         "budget_results": text,
         "messages": [AIMessage(content="Cost review added.")],
         "llm_calls": state.get("llm_calls", 0) + 1,
+        **failure,
     }

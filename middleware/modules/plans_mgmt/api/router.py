@@ -1,3 +1,4 @@
+import asyncio
 import secrets
 import string
 from datetime import datetime
@@ -9,15 +10,18 @@ from middleware.common.dtos import (
     DELETE_TRAVEL_PLAN_PHRASE,
     DeleteTravelRequest,
     JournalHappeningsRequest,
+    SaveTravelRequest,
     TravelReqCtx,
     TravelRequest,
     TravelResponse,
 )
 from middleware.common.http_session import require_api_user
 from middleware.common.log import get_logger, preview
-from middleware.modules.shared.persistence.dao.dao_names import DAO_TRAVEL_REQUEST
+from middleware.modules.shared.persistence.dao.dao_names import DAO_DRAFT_PLAN, DAO_TRAVEL_REQUEST
 from middleware.modules.shared.persistence.dao.objects import DaoObjectFactory
+from middleware.modules.shared.services.pipeline_context import catalog_fallback, is_model_config_error
 from middleware.modules.plans_mgmt.facades.happenings_facade import HappeningsFacade
+from middleware.modules.plans_mgmt.facades.plan_desk_facade import PlanDeskFacade
 from middleware.modules.plans_mgmt.facades.planner_facade import PlannerFacade
 
 router = APIRouter(tags=["plans-mgmt"])
@@ -49,16 +53,54 @@ async def journal_happenings(payload: JournalHappeningsRequest, request: Request
         )
         return {"success": True, **result}
     except ValueError as exc:
+        if is_model_config_error(exc):
+            return {
+                "success": True,
+                **catalog_fallback(
+                    user.get("preferences") or {},
+                    payload.month,
+                    12 if payload.expand else 5,
+                ),
+            }
         return JSONResponse(
             {"success": False, "message": str(exc), "events": []},
             status_code=400,
         )
     except Exception as exc:
+        if is_model_config_error(exc):
+            return {
+                "success": True,
+                **catalog_fallback(
+                    user.get("preferences") or {},
+                    payload.month,
+                    12 if payload.expand else 5,
+                ),
+            }
         logger.exception("journal happenings failed: %s", exc)
         return JSONResponse(
             {"success": False, "message": str(exc), "events": []},
             status_code=502,
         )
+
+
+@router.post("/api/v1/plan/desk")
+async def plan_desk(request: Request):
+    user = require_api_user(request)
+    try:
+        result = PlanDeskFacade().lookup(
+            user_id=user["id"],
+            preferences=user.get("preferences") or {},
+        )
+        return {"success": True, **result}
+    except ValueError as exc:
+        if is_model_config_error(exc):
+            return {"success": True, "needs_model": True}
+        return JSONResponse({"success": False, "message": str(exc)}, status_code=400)
+    except Exception as exc:
+        if is_model_config_error(exc):
+            return {"success": True, "needs_model": True}
+        logger.exception("plan desk failed: %s", exc)
+        return JSONResponse({"success": False, "message": str(exc)}, status_code=502)
 
 
 @router.get("/api/v1/travel/requests")
@@ -88,11 +130,22 @@ async def delete_travel_request(thread_id: str, payload: DeleteTravelRequest, re
             },
             status_code=400,
         )
-    dao = DaoObjectFactory.get_dao(DAO_TRAVEL_REQUEST)
-    if not dao.delete_for_user_thread(user["id"], thread_id):
+    saved = DaoObjectFactory.get_dao(DAO_TRAVEL_REQUEST).delete_for_user_thread(user["id"], thread_id)
+    draft = DaoObjectFactory.get_dao(DAO_DRAFT_PLAN).delete_for_user_thread(user["id"], thread_id)
+    if not saved and not draft:
         return JSONResponse({"success": False, "message": "Travel plan not found."}, status_code=404)
     logger.info("travel plan deleted thread=%s user=%s", thread_id, user["id"])
     return {"success": True}
+
+
+@router.post("/api/v1/travel/requests/save")
+async def save_travel_request(payload: SaveTravelRequest, request: Request):
+    user = require_api_user(request)
+    try:
+        record = PlannerFacade().save(user["id"], payload.thread_id)
+        return {"success": True, "request": record}
+    except ValueError as exc:
+        return JSONResponse({"success": False, "message": str(exc)}, status_code=400)
 
 
 @router.post("/api/v1/travel/planner")
@@ -119,7 +172,7 @@ async def travel_planner(payload: TravelRequest, request: Request) -> JSONRespon
             payload.llm_base_url or "-",
             preview(payload.message),
         )
-        PlannerFacade().execute(payload, ctx)
+        await asyncio.to_thread(PlannerFacade().execute, payload, ctx)
         result = dict(ctx.api_response.result or {})
         if ctx.user_message:
             result["prompt"] = ctx.user_message
@@ -143,3 +196,16 @@ async def travel_planner(payload: TravelRequest, request: Request) -> JSONRespon
             ).model_dump(),
             status_code=500,
         )
+
+
+@router.get("/api/v1/travel/planner/{thread_id}/trace")
+async def planner_trace(thread_id: str, request: Request, cursor: int = 0):
+    user = require_api_user(request)
+    return PlannerFacade().trace_since(user["id"], thread_id, cursor)
+
+
+@router.post("/api/v1/travel/planner/{thread_id}/cancel")
+async def cancel_planner(thread_id: str, request: Request):
+    user = require_api_user(request)
+    PlannerFacade().cancel(user["id"], thread_id)
+    return {"success": True, "cancelled": True}

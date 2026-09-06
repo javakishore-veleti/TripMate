@@ -4,6 +4,12 @@
     City, state or region, and country — not a street or postal code.
     What’s happening nearby uses these places.
   </p>
+  @if (usingDefaults() && defaultLabels().length) {
+    <p class="side-note">
+      Until you save cities here, menus use built-in default places:
+      {{ defaultLabels().join(' · ') }}.
+    </p>
+  }
   <form class="place-form journal-pad" (submit)="$event.preventDefault(); savePlaces()">
     @for (index of slots; track index) {
       <fieldset class="place-row">

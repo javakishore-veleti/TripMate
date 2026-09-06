@@ -159,7 +159,7 @@ export class AccountBriefModels implements OnInit {
             reason: { ...EMPTY_LLM_JOB, ...(prefs.llm_jobs?.reason ?? {}) },
             deep: { ...EMPTY_LLM_JOB, ...(prefs.llm_jobs?.deep ?? {}) },
           };
-          this.saved.set('Models saved. Trip journal and Plan a trip will use them.');
+          this.saved.set('Models saved. My Trips Journal and Plan a trip will use them.');
         },
         error: (err: HttpErrorResponse) => {
           this.saving.set(false);

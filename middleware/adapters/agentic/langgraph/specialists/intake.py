@@ -1,6 +1,7 @@
 from langchain_core.messages import AIMessage
 
 from middleware.adapters.agentic.langgraph.llm_text import JSON_MAX_TOKENS, complete_text, json_from_llm
+from middleware.adapters.agentic.langgraph.runtime import brief_failure
 from middleware.common.dtos import TravelState
 from middleware.common.log import get_logger, preview
 
@@ -10,6 +11,7 @@ logger = get_logger(__name__)
 def intake(state: TravelState):
     query = state["user_query"]
     llm_calls = state.get("llm_calls", 0)
+    failure = {}
     logger.info("intake started query=%s", preview(query))
     prompt = f"""
 Decide if this is a travel-planning or travel-information request.
@@ -43,6 +45,7 @@ Traveler request:
         logger.warning("intake fallback used: %s", exc)
         accepted = True
         note = "Intake could not parse the model reply, so the request continues."
+        failure = brief_failure(state, "intake", exc)
 
     if not accepted:
         reason = note or (
@@ -58,6 +61,7 @@ Traveler request:
             "final_response": reason,
             "messages": [AIMessage(content=reason)],
             "llm_calls": llm_calls,
+            **failure,
         }
 
     return {
@@ -65,4 +69,5 @@ Traveler request:
         "request_note": note,
         "messages": [AIMessage(content="Request accepted for trip planning.")],
         "llm_calls": llm_calls,
+        **failure,
     }

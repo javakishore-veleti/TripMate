@@ -3,8 +3,10 @@ from datetime import date
 
 from middleware.adapters.agentic.langgraph.dashboard.places_planner.windows import clean_event
 from middleware.adapters.agentic.langgraph.journal.happenings.roles import complete_role
+from middleware.adapters.agentic.langgraph.journal.happenings.tasks.month_sparks import sparks_near
 from middleware.adapters.agentic.langgraph.llm_text import json_from_llm
 from middleware.common.log import get_logger
+from middleware.common.popular_events import catalog_prompt_lines
 
 logger = get_logger(__name__)
 
@@ -17,12 +19,13 @@ def collect_month_happenings(state: dict) -> dict:
     end = date(year, month, monthrange(year, month)[1])
     window = f"{start.strftime('%B %Y')} ({start.isoformat()} to {end.isoformat()})"
     expand = bool(state.get("expand"))
-    limit = 12 if expand else 5
+    limit = int(state.get("limit") or 20)
     places = state.get("places") or []
     radius = int(state.get("radius_miles") or 200)
     packs = state.get("skill_names") or []
     lens = state.get("lens") or "mix"
     logger.info("journal happenings month=%s expand=%s limit=%s", window, expand, limit)
+    known = catalog_prompt_lines(places, month, limit=12)
     prompt = f"""
 Today is {today.isoformat()}.
 List well-known public events in {window} within about {radius} miles of:
@@ -32,9 +35,10 @@ Traveler lens: {lens}
 Preference packs: {', '.join(packs) or 'none selected'}
 
 Name real festivals, parades, food weeks, film/music events, and seasonal moments
-a traveler could plan around — SXSW, Jazz Fest, Pride, ACL, Sundance, Lunar New Year,
-Oktoberfest, and local equivalents near these places. Do not invent street addresses.
-Stay inside the radius. If something famous is farther, skip it.
+a traveler could plan around. Prefer neighborhood days and local seasons people miss —
+not only Christmas, Thanksgiving, New Year, or Presidents’ Day.
+Do not invent street addresses. Stay inside the radius. If something famous is farther, skip it.
+{known}
 
 Return JSON only:
 {{
@@ -49,7 +53,7 @@ Return JSON only:
       "day": "YYYY-MM-DD if known, else empty",
       "miles_from": 0,
       "near": "one of the listed places",
-      "blurb": "one short sentence"
+      "blurb": "Lanterns fill the park at dusk."
     }}
   ]
 }}
@@ -72,12 +76,21 @@ Give the top {limit} events, strongest first.
             if not isinstance(item, dict):
                 continue
             cleaned = clean_event(item, places[0] if places else "")
-            if cleaned and cleaned["miles_from"] <= radius:
+            if cleaned and (not radius or cleaned["miles_from"] <= radius or cleaned["miles_from"] == 0):
                 events.append(cleaned)
             if len(events) >= limit:
                 break
     except Exception as exc:
         logger.warning("journal happenings fallback: %s", exc)
+    if len(events) < limit:
+        known = {item["name"] for item in events}
+        for spark in sparks_near(places, month, limit):
+            if spark["name"] in known:
+                continue
+            events.append(spark)
+            if len(events) >= limit:
+                break
+        logger.info("journal happenings seeded sparks=%s total=%s", len(events) - len(known), len(events))
     return {
         "window": window,
         "events": events,

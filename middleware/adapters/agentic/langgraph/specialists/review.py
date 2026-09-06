@@ -9,11 +9,15 @@ logger = get_logger(__name__)
 
 def traveler_review(state: TravelState):
     logger.info("traveler_review pausing")
+    proposed = state.get("proposed_action") or {}
+    draft = str(proposed.get("draft_itinerary") or state.get("itinerary") or "")
+    approval = str(proposed.get("approval_request") or state.get("approval_request") or "")
     review = interrupt(
         {
             "question": "Do you approve this trip draft?",
-            "draft_itinerary": state.get("itinerary", ""),
-            "approval_request": state.get("approval_request", ""),
+            "draft_itinerary": draft,
+            "approval_request": approval,
+            "proposed_action": proposed,
             "selected_specialists": state.get("selected_specialists", []),
             "coordinator_notes": state.get("coordinator_notes", ""),
             "expected_response": {

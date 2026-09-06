@@ -1,11 +1,43 @@
 <section class="page-hero">
   <p class="kicker">Your next trip</p>
   <h1>Tell us the trip. We’ll sketch the days.</h1>
-  <p>
-    Flights, stays, weather, budget, then a draft you can approve.
-    Your saved traveler preferences fill in the blanks.
-  </p>
+  <p class="lede">Flights, stays, weather, and budget become a draft you can approve.</p>
+  @if (deskPlaces().length) {
+    <div class="hero-places">
+      <p class="hero-places-label">{{ usingDefaults() ? 'Default places' : 'Your places' }}</p>
+      <ul>
+        @for (place of deskPlaces(); track place) {
+          <li>{{ place }}</li>
+        }
+      </ul>
+    </div>
+  }
+  @if (desk()?.cached) {
+    <p class="hero-meta">Last stored brief</p>
+  }
 </section>
+
+@if (modelHint(); as hint) {
+  <p class="side-note">
+    {{ hint.before }}<a routerLink="/account/models">{{ hint.link }}</a>{{ hint.after }}
+  </p>
+} @else if (deskError()) {
+  <p class="auth-error">{{ deskError() }}</p>
+} @else if (desk(); as card) {
+  <section class="planner-card">
+    <p class="kicker">Plan desk</p>
+    <h2>{{ card.headline || 'Your next ask' }}</h2>
+    @if (deskNote()) {
+      <p>{{ deskNote() }}</p>
+    }
+    @if (deskLeftover()) {
+      <p class="side-note">Last ask: {{ deskLeftover() }}</p>
+    }
+    @if (card.skill_names?.length) {
+      <p class="side-note">Using {{ card.skill_names?.join(', ') }}.</p>
+    }
+  </section>
+}
 
 <section class="planner-card">
   <div class="card-header">
@@ -13,7 +45,10 @@
       <h2>Where do you want to go?</h2>
       <p>Try: a week in Japan from Dhaka, mid-range, under 2 lakh.</p>
     </div>
-    <div class="status-pill"><span class="status-dot"></span> Ready</div>
+    <div class="status-pill" [class.is-working]="loading()">
+      <span class="status-dot"></span>
+      {{ loading() ? 'Working' : 'Ready' }}
+    </div>
   </div>
 
   <details class="planner-advanced">
@@ -56,20 +91,36 @@
   </details>
 
   <div class="input-area">
-    <textarea [(ngModel)]="message" placeholder="Plan a complete 7 days Japan trip including flights, hotels and sightseeing under 2 lakhs..."></textarea>
-    <button class="send-btn" type="button" [disabled]="loading()" (click)="send()">
+    <textarea [(ngModel)]="message" [disabled]="loading()" placeholder="Plan a complete 7 days Japan trip including flights, hotels and sightseeing under 2 lakhs..."></textarea>
+    <div class="input-actions">
+      <button class="send-btn" type="button" [disabled]="loading()" (click)="send()">
+        @if (loading()) {
+          <span class="loader"></span>
+          Working
+        } @else {
+          Generate Draft
+        }
+      </button>
       @if (loading()) {
-        <span class="loader"></span>
-      } @else {
-        Generate Draft
+        <button class="copy-btn" type="button" [disabled]="cancelling()" (click)="cancelRun()">
+          {{ cancelling() ? 'Stopping…' : 'Cancel' }}
+        </button>
       }
+    </div>
+  </div>
+  <div class="trace-bar">
+    <button type="button" class="secondary-link" (click)="toggleTrace()">
+      {{ traceOpen() ? 'Hide what’s happening in the Agentic Pipeline' : "What’s happening in the Agentic Pipeline" }}
     </button>
   </div>
+  @if (traceOpen()) {
+    <pre class="run-trace">{{ traceText() || (loading() ? 'Started. Watching the pipeline…' : 'Generate a draft and the steps will show up here.') }}</pre>
+  }
 
   <div class="quick-prompts">
-    <button type="button" (click)="setPrompt('Plan a complete 7 days Japan trip from Bangladesh including flights, hotels and sightseeing under 2 lakhs.')">Japan Trip</button>
-    <button type="button" (click)="setPrompt('Plan a 5 days Dubai trip from Dhaka with flights, hotels and sightseeing.')">Dubai Trip</button>
-    <button type="button" (click)="setPrompt('Plan a 7 days Thailand trip from Bangladesh with budget hotels and sightseeing.')">Thailand Trip</button>
+    <button type="button" [disabled]="loading()" (click)="setPrompt('Plan a complete 7 days Japan trip from Bangladesh including flights, hotels and sightseeing under 2 lakhs.')">Japan Trip</button>
+    <button type="button" [disabled]="loading()" (click)="setPrompt('Plan a 5 days Dubai trip from Dhaka with flights, hotels and sightseeing.')">Dubai Trip</button>
+    <button type="button" [disabled]="loading()" (click)="setPrompt('Plan a 7 days Thailand trip from Bangladesh with budget hotels and sightseeing.')">Thailand Trip</button>
   </div>
 </section>
 
@@ -100,6 +151,9 @@
       </div>
       <div class="result-actions">
         <button class="copy-btn" type="button" (click)="copy()">Copy plan</button>
+        <button class="send-btn" type="button" [disabled]="saving() || saved() || loading()" (click)="savePlan()">
+          {{ saving() ? 'Saving…' : saved() ? 'Saved' : 'Save Plan' }}
+        </button>
       </div>
     </div>
     <div class="result-box itinerary-doc" [innerHTML]="answerHtml()"></div>
@@ -115,7 +169,7 @@
   />
 }
 
-@if (threadId) {
+@if (result() && threadId) {
   <app-delete-plan [threadId]="threadId" (deleted)="afterDeleted()" />
 }
 

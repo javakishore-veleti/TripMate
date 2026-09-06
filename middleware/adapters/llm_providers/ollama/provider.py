@@ -49,26 +49,49 @@ class OllamaLLMProvider(LLMProvider):
 
         logger.info("ollama request url=%s model=%s", base_url, model)
         started = time.perf_counter()
+        session = requests.Session()
+        user_id = ""
+        thread_id = ""
+        cancel = None
         try:
-            response = requests.post(
+            from middleware.modules.shared.services.objects import ServicesObjectFactory
+            from middleware.modules.shared.services.pipeline_cancel_service import (
+                PipelineCancelled,
+                current_run,
+            )
+            from middleware.modules.shared.services.service_names import SERVICE_PIPELINE_CANCEL
+
+            user_id, thread_id = current_run()
+            cancel = ServicesObjectFactory.get_service(SERVICE_PIPELINE_CANCEL)
+            if user_id and thread_id:
+                cancel.bind_http(user_id, thread_id, session)
+            response = session.post(
                 f"{base_url}/api/chat",
                 json=payload,
                 timeout=_DEFAULT_TIMEOUT_SECONDS,
             )
             response.raise_for_status()
-        except requests.ConnectionError as exc:
-            raise RuntimeError(
-                f"Ollama is not reachable at {base_url}. Start Ollama or set "
-                "OLLAMA_BASE_URL to the host that is running it."
-            ) from exc
-        except requests.HTTPError as exc:
-            detail = ""
-            if exc.response is not None:
-                detail = (exc.response.text or "").strip()[:240]
-            raise RuntimeError(
-                f"Ollama request failed at {base_url} for model {model}: "
-                f"{detail or exc}"
-            ) from exc
+        except requests.RequestException as exc:
+            if user_id and thread_id and cancel is not None and cancel.is_cancelled(user_id, thread_id):
+                raise PipelineCancelled() from exc
+            if isinstance(exc, requests.ConnectionError):
+                raise RuntimeError(
+                    f"Ollama is not reachable at {base_url}. Start Ollama or set "
+                    "OLLAMA_BASE_URL to the host that is running it."
+                ) from exc
+            if isinstance(exc, requests.HTTPError):
+                detail = ""
+                if exc.response is not None:
+                    detail = (exc.response.text or "").strip()[:240]
+                raise RuntimeError(
+                    f"Ollama request failed at {base_url} for model {model}: "
+                    f"{detail or exc}"
+                ) from exc
+            raise
+        finally:
+            if cancel is not None and user_id and thread_id:
+                cancel.unbind_http(user_id, thread_id)
+            session.close()
 
         body = response.json() if response.content else {}
         latency_ms = (time.perf_counter() - started) * 1000

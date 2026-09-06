@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 
+import { AuthService } from '../../core/services/auth.service';
 import { BrandBar } from '../brand-bar/brand-bar';
 
 @Component({
@@ -10,4 +11,6 @@ import { BrandBar } from '../brand-bar/brand-bar';
 })
 export class Shell {
   readonly year = new Date().getFullYear();
+
+  constructor(readonly auth: AuthService) {}
 }

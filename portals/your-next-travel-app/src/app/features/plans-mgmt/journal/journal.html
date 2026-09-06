@@ -1,9 +1,15 @@
 <section class="hero-panel page-hero">
-  <p class="kicker">Trip journal</p>
+  <p class="kicker">My Trips Journal</p>
   <h1>{{ monthLabel() }}</h1>
   <p class="lede">
     Your calendar, your trips, and what’s happening near the places on your account.
   </p>
+  @if (placeNotice()) {
+    <p class="side-note">{{ placeNotice() }}</p>
+  }
+  @if (cached()) {
+    <p class="side-note">Showing the last stored brief.</p>
+  }
 </section>
 
 <section class="journal-board">
@@ -57,7 +63,7 @@
         <a class="primary-link" routerLink="/plan">Plan a trip</a>
       </div>
       @if (loading()) {
-        <p>Opening your journal…</p>
+        <p>Working on your started plans.</p>
       } @else if (trips().length) {
         <ul class="trip-list">
           @for (item of trips(); track item.record.thread_id) {
@@ -79,11 +85,15 @@
     </section>
 
     <section class="planner-card journal-side-card">
-      <div class="side-head">
-        <div>
-          <p class="kicker">What’s happening</p>
-          <h2>This month near you</h2>
-        </div>
+      <div class="side-head happen-head">
+        <h2>What’s happening this month</h2>
+        @if (events().length) {
+          <div class="happen-pager">
+            <button type="button" class="cal-nav" (click)="shiftHappenings(-1)" [disabled]="!canHappenPrev()">‹</button>
+            <span>{{ happenPage() + 1 }}/{{ happenPageCount() }}</span>
+            <button type="button" class="cal-nav" (click)="shiftHappenings(1)" [disabled]="!canHappenNext()">›</button>
+          </div>
+        }
       </div>
       @if (skillNames().length) {
         <p class="side-note">Using {{ skillNames().join(', ') }}.</p>
@@ -91,14 +101,16 @@
       @if (classifyNote()) {
         <p class="side-note">{{ classifyNote() }}</p>
       }
-      @if (!places().length) {
-        <p>Add up to five cities on your account, then we’ll brief this month.</p>
-        <a class="primary-link" routerLink="/account/places">Add places</a>
-      } @else if (asking()) {
-        <p>Looking at this month…</p>
+      @if (asking()) {
+        <p>Working on this month.</p>
       } @else if (askError()) {
         <p class="auth-error">{{ askError() }}</p>
       } @else if (selectedEvents().length) {
+        @if (modelHint(); as hint) {
+          <p class="side-note">
+            {{ hint.before }}<a routerLink="/account/models">{{ hint.link }}</a>{{ hint.after }}
+          </p>
+        }
         <ul class="happen-list">
           @for (event of selectedEvents(); track event.name + event.near) {
             <li>
@@ -112,36 +124,12 @@
             </li>
           }
         </ul>
-        @if (!expanded()) {
-          <button type="button" class="btn-navy see-more" (click)="seeMore()" [disabled]="expanding()">
-            {{ expanding() ? 'Asking the models…' : 'See more this month' }}
-          </button>
-        }
+      } @else if (modelHint(); as hint) {
+        <p class="side-note">
+          {{ hint.before }}<a routerLink="/account/models">{{ hint.link }}</a>{{ hint.after }}
+        </p>
       } @else {
-        <p>No public events came back for this month. Try another month or add another city.</p>
-      }
-
-      @if (expanded() && (pack() || food() || ideas())) {
-        <section class="deep-briefs">
-          @if (pack()) {
-            <article>
-              <h3>What to take</h3>
-              <p>{{ pack() }}</p>
-            </article>
-          }
-          @if (food()) {
-            <article>
-              <h3>Food to look for</h3>
-              <p>{{ food() }}</p>
-            </article>
-          }
-          @if (ideas()) {
-            <article>
-              <h3>Trip shapes</h3>
-              <p>{{ ideas() }}</p>
-            </article>
-          }
-        </section>
+        <p>This month is keeping its secrets near your places.</p>
       }
     </section>
   </aside>

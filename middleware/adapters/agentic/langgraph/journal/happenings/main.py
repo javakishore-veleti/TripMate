@@ -12,8 +12,9 @@ from middleware.adapters.agentic.langgraph.journal.happenings.tasks.classify imp
 from middleware.adapters.agentic.langgraph.journal.happenings.tasks.happenings import (
     collect_month_happenings,
 )
+from middleware.common.default_places import preferences_for_pipeline
 from middleware.common.log import get_logger
-from middleware.common.user_preferences import format_place, normalize_preferences
+from middleware.common.user_preferences import format_place
 from middleware.modules.preferences_mgmt.persistence.store import selected_skill_names
 
 logger = get_logger(__name__)
@@ -82,9 +83,7 @@ def run_journal_happenings(
     year: int | None = None,
     month: int | None = None,
 ) -> dict:
-    prefs = normalize_preferences(preferences)
-    if not prefs["places"]:
-        raise ValueError("Add up to five cities on your account first.")
+    prefs, _source = preferences_for_pipeline(preferences)
     jobs = resolve_brief_jobs(prefs)
     nearby = jobs["reason"]
     skills = selected_skill_names(user_id)

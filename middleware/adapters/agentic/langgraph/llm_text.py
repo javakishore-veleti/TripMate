@@ -23,6 +23,7 @@ def empty_constraints() -> dict[str, Any]:
         "destination": "",
         "origin": "",
         "duration": "",
+        "start_date": "",
         "budget": "",
         "travel_style": "",
         "special_preferences": [],
@@ -96,6 +97,9 @@ def complete_text(
             base_url=str(state.get("llm_base_url") or "") or None,
         ),
     )
+    from middleware.modules.shared.services.pipeline_cancel_service import raise_if_cancelled
+
+    raise_if_cancelled()
     logger.info(
         "llm call job=%s provider=%s model=%s max_tokens=%s",
         job or "default",

@@ -8,6 +8,8 @@ from middleware.common.http_session import (
     require_api_user,
     set_session_cookie,
 )
+from middleware.modules.shared.services.pipeline_context import is_model_config_error
+from middleware.modules.user_mgmt.facades.account_desk_facade import AccountDeskFacade
 from middleware.modules.user_mgmt.facades.auth_facade import AuthFacade
 
 router = APIRouter(tags=["user-mgmt"])
@@ -74,6 +76,26 @@ async def delete_account(request: Request):
     response = JSONResponse({"success": True})
     clear_session_cookie(response)
     return response
+
+
+@router.post("/api/v1/account/desk")
+async def account_desk(request: Request):
+    user = require_api_user(request)
+    try:
+        result = AccountDeskFacade().lookup(
+            user_id=user["id"],
+            preferences=user.get("preferences") or {},
+            display_name=user.get("display_name") or "",
+        )
+        return {"success": True, **result}
+    except ValueError as exc:
+        if is_model_config_error(exc):
+            return {"success": True, "needs_model": True}
+        return JSONResponse({"success": False, "message": str(exc)}, status_code=400)
+    except Exception as exc:
+        if is_model_config_error(exc):
+            return {"success": True, "needs_model": True}
+        return JSONResponse({"success": False, "message": str(exc)}, status_code=502)
 
 
 @router.get("/api/v1/preferences")

@@ -1,13 +1,16 @@
 from langgraph.graph import END
 
+from middleware.adapters.agentic.langgraph.runtime import is_halted
 from middleware.adapters.agentic.langgraph.specialists.ids import (
     AIR_RESEARCH,
     CLIMATE_BRIEF,
     COORDINATOR,
     COST_REVIEW,
+    HALT,
     REQUEST_DECLINED,
     SPECIALIST_ORDER,
     STAY_RESEARCH,
+    TRAVELER_REVIEW,
     TRIP_DRAFT,
 )
 from middleware.common.dtos import TravelState
@@ -20,11 +23,15 @@ ROUTE_MAP = {
     CLIMATE_BRIEF: CLIMATE_BRIEF,
     COST_REVIEW: COST_REVIEW,
     TRIP_DRAFT: TRIP_DRAFT,
+    TRAVELER_REVIEW: TRAVELER_REVIEW,
+    HALT: HALT,
     END: END,
 }
 
 
 def _next_specialist(state: TravelState, current: str | None) -> str:
+    if is_halted(state):
+        return HALT
     selected = state.get("selected_specialists") or []
     start_after = -1
     if current is not None:
@@ -39,6 +46,8 @@ def _next_specialist(state: TravelState, current: str | None) -> str:
 
 
 def route_after_intake(state: TravelState) -> str:
+    if is_halted(state):
+        return HALT
     if state.get("request_accepted") is False:
         return REQUEST_DECLINED
     return COORDINATOR
@@ -53,3 +62,9 @@ def route_after_specialist(current: str):
         return _next_specialist(state, current)
 
     return _route
+
+
+def route_after_draft(state: TravelState) -> str:
+    if is_halted(state):
+        return HALT
+    return TRAVELER_REVIEW

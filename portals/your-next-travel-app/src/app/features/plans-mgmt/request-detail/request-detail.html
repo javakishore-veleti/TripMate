@@ -2,7 +2,12 @@
   <section class="hero-section">
     <div class="badge">Saved request</div>
     <h1>{{ item.status.replaceAll('_', ' ') }}</h1>
-    <p>Thread ID: {{ item.thread_id }}</p>
+    @if (tripLine()) {
+      <p>Trip days: {{ tripLine() }}</p>
+    }
+    @if (plannedLine()) {
+      <p>Planned on {{ plannedLine() }}</p>
+    }
   </section>
 
   <section class="planner-card">

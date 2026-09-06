@@ -9,6 +9,7 @@ COORDINATOR = "coordinator"
 REQUEST_DECLINED = "request_declined"
 TRAVELER_REVIEW = "traveler_review"
 PLAN_ASSEMBLE = "plan_assemble"
+HALT = "halt"
 
 SPECIALIST_ORDER = [
     AIR_RESEARCH,

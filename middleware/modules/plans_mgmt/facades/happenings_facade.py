@@ -1,10 +1,13 @@
+from middleware.modules.shared.services.interfaces import JournalHappeningsService
 from middleware.modules.shared.services.objects import ServicesObjectFactory
 from middleware.modules.shared.services.service_names import SERVICE_JOURNAL_HAPPENINGS
 
 
 class HappeningsFacade:
-    def __init__(self):
-        self._service = ServicesObjectFactory.get_service(SERVICE_JOURNAL_HAPPENINGS)
+    def __init__(self, service: JournalHappeningsService | None = None):
+        self._service: JournalHappeningsService = service or ServicesObjectFactory.get_service(
+            SERVICE_JOURNAL_HAPPENINGS
+        )
 
     def lookup(
         self,

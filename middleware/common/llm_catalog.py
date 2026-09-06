@@ -6,6 +6,7 @@ from middleware.common.ollama_settings import (
     list_ollama_models,
     ollama_base_url,
     ollama_default_model,
+    prefer_chat_model,
 )
 
 logger = get_logger(__name__)
@@ -101,11 +102,8 @@ def ui_catalog(ollama_url: str | None = None) -> dict:
         )
 
     ollama = next((item for item in providers if item["id"] == LLM_PROVIDER_OLLAMA), None)
-    ollama_model = (
-        ollama_default_model()
-        or ((ollama or {}).get("models") or [{}])[0].get("id")
-        or DEFAULT_LLM_MODEL
-    )
+    ollama_ids = [item.get("id") or "" for item in ((ollama or {}).get("models") or [])]
+    ollama_model = ollama_default_model() or prefer_chat_model(ollama_ids) or DEFAULT_LLM_MODEL
     return {
         "default_provider": DEFAULT_LLM_PROVIDER,
         "default_model": ollama_model,

@@ -56,14 +56,22 @@ The portal and your account are not agents. They store places, packs, and drafts
 
 YNTPL does not run one long chat. It runs a few short pipelines. Each pipeline is a path of jobs for one kind of ask. You start it. It walks the path. Then it shows you the result.
 
-There are three today:
-
-1. **Draft a trip** — your ask, then air, stays, weather, and cost, then a week you review.
-2. **What’s on nearby** — the cities you watch, then the month’s mood, then happenings in your radius.
-3. **Places briefs** — this week, this month, or this quarter, then a short read of those same cities.
+After you sign in, five menus each open a pipeline. Explore does not — it is a catalog, not a brief.
 
 <p align="center">
-  <img src="Docs/Assets/yntpl-agentic-pipelines.png" alt="Three YNTPL pipelines: draft a trip, what’s on nearby, and places briefs." width="100%">
+  <img src="Docs/Assets/yntpl-signed-in-menus.png" alt="Signed-in menus: Explore, Dashboard, My Trips Journal, Plan a trip, Preferences, and Account." width="100%">
+</p>
+
+1. **Dashboard — places briefs** — this week, this month, or this quarter, then a short read of the cities you watch.
+2. **My Trips Journal — what’s on nearby** — those cities, then the month’s mood, then happenings in your radius.
+3. **Plan a trip — plan desk** — leftover draft, places, and packs, then a note before you write. Generate Draft is a separate ask you review; it is not this desk and it is not reused from a stored brief.
+4. **Preferences — packs lens** — the packs you switched on, then how they shape briefs.
+5. **Account — account desk** — your places, then a short note on what the menus use.
+
+If you have not saved cities yet, those five menus use ten built-in default places and say so. Your five Account slots stay empty until you write them. A later visit with the same context shows the last stored brief; a large enough change runs the pipeline again.
+
+<p align="center">
+  <img src="Docs/Assets/yntpl-agentic-pipelines.png" alt="Five signed-in YNTPL pipelines: Dashboard, My Trips Journal, Plan a trip, Preferences, and Account." width="100%">
 </p>
 
 ## Table of contents
@@ -117,7 +125,7 @@ If you can start the app on your computer (or on a small cloud box you own), you
 
 ### Watch the places that matter
 
-On **Account → Places**, add up to five cities and a radius. Those are the places the portal watches. Briefs and drafts stay grounded in that list instead of inventing a destination you never asked for.
+On **Account → Places**, add up to five cities and a radius. Those are the places the portal watches. Briefs stay grounded in that list instead of inventing a destination you never asked for. Until you save cities, menus use ten built-in defaults and tell you they are doing so.
 
 ### Say how you like to travel
 
@@ -202,7 +210,7 @@ Optional: `OLLAMA_BASE_URL` (default `http://127.0.0.1:11434`) for a local Ollam
 
 ## Request flow
 
-What runs **today**: browser → `plans_mgmt` API → facade → planner service → `TravelRequestAgentImpl` → LangGraph adapter → a draft you review.
+What runs **today**: browser → `plans_mgmt` API → facade → planner **service interface** → `TravelRequestAgentImpl` → LangGraph adapter → a draft you review.
 
 The UI sends `agentic_adapter` (default `langgraph`). Sequence diagrams live in [Docs/Design/TravelReqAgentImpl.md](Docs/Design/TravelReqAgentImpl.md), not on this product page.
 
@@ -219,7 +227,7 @@ The UI sends `agentic_adapter` (default `langgraph`). Sequence diagrams live in 
 | LLM providers | `middleware/adapters/llm_providers/` | Ollama, Groq |
 | Local data | `runtime-data/local-deploy/` | SQLite and preference packs (not in git) |
 
-Call sequence: API → facade → service → DAO and/or adapter factory → LangGraph (or later ADK) → LLM provider.
+Call sequence: API → facade → service interface → DAO and/or adapter factory → LangGraph (or later ADK) → LLM provider.
 
 ## Understanding Python Frameworks
 

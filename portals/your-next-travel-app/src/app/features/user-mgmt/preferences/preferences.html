@@ -7,6 +7,22 @@
     built-in pack; your copy is saved as a <code>SKILL.md</code> file on this
     instance.
   </p>
+  @if (lens()?.places_source === 'system_default') {
+    <p class="side-note">
+      Showing built-in default places: {{ (lens()?.places ?? []).join(' · ') }}.
+    </p>
+  }
+  @if (lens()?.cached) {
+    <p class="side-note">Showing the last stored brief.</p>
+  }
+  @if (lens()?.note) {
+    <p class="side-note">{{ lens()?.note }}</p>
+  }
+  @if (modelHint(); as hint) {
+    <p class="side-note">
+      {{ hint.before }}<a routerLink="/account/models">{{ hint.link }}</a>{{ hint.after }}
+    </p>
+  }
 </section>
 
 <section class="planner-card dashboard-actions">
@@ -15,7 +31,7 @@
 </section>
 
 @if (loading()) {
-  <section class="planner-card"><p>Loading preference packs…</p></section>
+  <section class="planner-card"><p>Working on your packs.</p></section>
 } @else if (skills().length) {
   <section class="request-grid">
     @for (skill of skills(); track skill.id) {

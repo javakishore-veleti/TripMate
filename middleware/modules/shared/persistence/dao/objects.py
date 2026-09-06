@@ -1,11 +1,15 @@
 from middleware.modules.shared.persistence.dao.dao_names import (
     DAO_APP_SESSION,
     DAO_APP_USER,
+    DAO_DRAFT_PLAN,
+    DAO_PIPELINE_SNAPSHOT,
     DAO_TRAVEL_REQUEST,
 )
 from middleware.modules.shared.persistence.dao.impls import (
     AppSessionDaoImpl,
     AppUserDaoImpl,
+    DraftPlanDaoImpl,
+    PipelineSnapshotDaoImpl,
     TravelRequestDaoImpl,
 )
 
@@ -14,6 +18,8 @@ dao_names_to_classes = {
     DAO_APP_USER: AppUserDaoImpl,
     DAO_APP_SESSION: AppSessionDaoImpl,
     DAO_TRAVEL_REQUEST: TravelRequestDaoImpl,
+    DAO_DRAFT_PLAN: DraftPlanDaoImpl,
+    DAO_PIPELINE_SNAPSHOT: PipelineSnapshotDaoImpl,
 }
 
 

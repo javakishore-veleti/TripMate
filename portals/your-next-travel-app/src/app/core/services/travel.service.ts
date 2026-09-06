@@ -4,9 +4,13 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import {
+  AccountDeskResponse,
   AreaEventsResponse,
+  DefaultPlacesResponse,
   JournalHappeningsResponse,
   LlmCatalog,
+  PacksLensResponse,
+  PlanDeskResponse,
   TravelRequestRecord,
   TravelResponse,
 } from '../models/api.models';
@@ -18,6 +22,22 @@ export class TravelService {
 
   areaEvents(horizon: string): Observable<AreaEventsResponse> {
     return this.api.post<AreaEventsResponse>('/area-events', { horizon });
+  }
+
+  defaultPlaces(): Observable<DefaultPlacesResponse> {
+    return this.api.get<DefaultPlacesResponse>('/places/defaults');
+  }
+
+  planDesk(): Observable<PlanDeskResponse> {
+    return this.api.post<PlanDeskResponse>('/plan/desk', {});
+  }
+
+  packsLens(): Observable<PacksLensResponse> {
+    return this.api.post<PacksLensResponse>('/preference-skills/lens', {});
+  }
+
+  accountDesk(): Observable<AccountDeskResponse> {
+    return this.api.post<AccountDeskResponse>('/account/desk', {});
   }
 
   journalHappenings(payload: {
@@ -38,6 +58,18 @@ export class TravelService {
 
   plan(payload: Record<string, unknown>): Observable<TravelResponse> {
     return this.api.post<TravelResponse>('/travel/planner', payload);
+  }
+
+  savePlan(threadId: string): Observable<{ success: boolean; message?: string; request?: TravelRequestRecord }> {
+    return this.api.post('/travel/requests/save', { thread_id: threadId });
+  }
+
+  plannerTrace(threadId: string, cursor = 0): Observable<{ lines: string[]; cursor: number; done: boolean }> {
+    return this.api.get(`/travel/planner/${threadId}/trace`, new HttpParams().set('cursor', String(cursor)));
+  }
+
+  cancelPlan(threadId: string): Observable<{ success: boolean; cancelled?: boolean }> {
+    return this.api.post(`/travel/planner/${threadId}/cancel`, {});
   }
 
   approve(payload: Record<string, unknown>): Observable<TravelResponse> {

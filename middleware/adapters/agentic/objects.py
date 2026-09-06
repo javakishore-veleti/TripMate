@@ -1,6 +1,9 @@
 from middleware.adapters.agentic.interfaces import AgenticFrameworkAdapter
 from middleware.adapters.agentic.langgraph.dashboard.places_planner.main import run_places_planner
 from middleware.adapters.agentic.langgraph.journal.happenings.main import run_journal_happenings
+from middleware.adapters.agentic.langgraph.menus.account_desk import run_account_desk
+from middleware.adapters.agentic.langgraph.menus.packs_lens import run_packs_lens
+from middleware.adapters.agentic.langgraph.menus.plan_desk import run_plan_desk
 from middleware.adapters.agentic.langgraph.trip_compose import TripComposeAdapter
 from middleware.common.constants.agentic_adapters import AGENTIC_ADAPTER_LANGGRAPH
 
@@ -43,4 +46,44 @@ class AgenticAdapterObjectFactory:
             user_id=user_id,
             preferences=preferences,
             horizon=horizon,
+        )
+
+    @staticmethod
+    def plan_desk(
+        user_id: str,
+        preferences: dict,
+        leftover_line: str = "",
+        skill_names: list[str] | None = None,
+    ) -> dict:
+        return run_plan_desk(
+            user_id=user_id,
+            preferences=preferences,
+            leftover_line=leftover_line,
+            skill_names=skill_names,
+        )
+
+    @staticmethod
+    def packs_lens(
+        user_id: str,
+        preferences: dict,
+        skill_names: list[str] | None = None,
+    ) -> dict:
+        return run_packs_lens(
+            user_id=user_id,
+            preferences=preferences,
+            skill_names=skill_names,
+        )
+
+    @staticmethod
+    def account_desk(
+        user_id: str,
+        preferences: dict,
+        places_source: str,
+        display_name: str = "",
+    ) -> dict:
+        return run_account_desk(
+            user_id=user_id,
+            preferences=preferences,
+            places_source=places_source,
+            display_name=display_name,
         )

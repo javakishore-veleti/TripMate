@@ -3,6 +3,7 @@ import { Component, OnInit, computed, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 import { AreaEvent, InterestPlace, TravelRequestRecord } from '../../../core/models/api.models';
+import { ModelHintCopy, isModelConfigMessage, modelHintFor, needsModelHint } from '../../../core/models/model-hint';
 import { AuthService } from '../../../core/services/auth.service';
 import { TravelService } from '../../../core/services/travel.service';
 import { Horizon, horizonLabel } from './season-moments';
@@ -29,6 +30,10 @@ export class Dashboard implements OnInit {
   windowNote = signal('');
   horizon = signal<Horizon>('month');
   planningOpen = signal(true);
+  placesSource = signal('');
+  watchedPlaces = signal<string[]>([]);
+  cached = signal(false);
+  modelHint = signal<ModelHintCopy | null>(null);
 
   trips = computed(() => this.records().map((record) => ({ record, story: tripStory(record) })));
   leftover = computed(() => {
@@ -68,6 +73,13 @@ export class Dashboard implements OnInit {
     private readonly router: Router,
   ) {}
 
+  usingDefaults = computed(() => this.placesSource() === 'system_default');
+  placeNotice = computed(() =>
+    this.usingDefaults()
+      ? `Showing built-in default places: ${(this.watchedPlaces().length ? this.watchedPlaces() : this.places().map((place) => [place.city, place.country].filter(Boolean).join(', '))).join(' · ')}.`
+      : '',
+  );
+
   ngOnInit(): void {
     this.travel.listRequests().subscribe({
       next: (records) => {
@@ -76,6 +88,7 @@ export class Dashboard implements OnInit {
       },
       error: () => this.loading.set(false),
     });
+    this.askEvents();
   }
 
   togglePlanning(): void {
@@ -88,18 +101,21 @@ export class Dashboard implements OnInit {
   }
 
   askEvents(): void {
-    if (!this.places().length) {
-      this.askError.set('Add cities on your account first.');
-      this.events.set([]);
-      return;
-    }
     this.asking.set(true);
     this.askError.set('');
+    this.modelHint.set(null);
     this.travel.areaEvents(this.horizon()).subscribe({
       next: (response) => {
         this.asking.set(false);
         this.events.set(response.events ?? []);
         this.windowNote.set(response.window || '');
+        this.placesSource.set(response.places_source || '');
+        this.watchedPlaces.set(response.places ?? []);
+        this.cached.set(Boolean(response.cached));
+        if (needsModelHint(response)) {
+          this.modelHint.set(modelHintFor('dashboard'));
+          return;
+        }
         if (!response.success) {
           this.askError.set(response.message || 'Could not load events around your places.');
         }
@@ -107,7 +123,12 @@ export class Dashboard implements OnInit {
       error: (err: HttpErrorResponse) => {
         this.asking.set(false);
         this.events.set([]);
-        this.askError.set(err.error?.message || 'Could not load events around your places.');
+        const message = err.error?.message || '';
+        if (isModelConfigMessage(message)) {
+          this.modelHint.set(modelHintFor('dashboard'));
+          return;
+        }
+        this.askError.set(message || 'Could not load events around your places.');
       },
     });
   }

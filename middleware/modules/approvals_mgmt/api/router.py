@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
@@ -33,7 +35,8 @@ async def approve_travel_plan(payload: ApprovalRequest, request: Request) -> JSO
             llm_model=payload.llm_model,
             llm_base_url=payload.llm_base_url,
         )
-        PlannerFacade().execute(
+        await asyncio.to_thread(
+            PlannerFacade().execute,
             TravelRequest(
                 message="",
                 thread_id=payload.thread_id,

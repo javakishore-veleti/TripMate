@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 import { EMPTY_PLACE, EMPTY_PREFERENCES, InterestPlace } from '../../../../core/models/api.models';
 import { AuthService } from '../../../../core/services/auth.service';
+import { TravelService } from '../../../../core/services/travel.service';
 
 @Component({
   selector: 'app-account-places',
@@ -17,8 +18,16 @@ export class AccountPlaces implements OnInit {
   error = signal('');
   saved = signal('');
   saving = signal(false);
+  defaultLabels = signal<string[]>([]);
 
-  constructor(private readonly auth: AuthService) {}
+  constructor(
+    private readonly auth: AuthService,
+    private readonly travel: TravelService,
+  ) {}
+
+  usingDefaults(): boolean {
+    return !this.places.some((place) => place.city.trim());
+  }
 
   ngOnInit(): void {
     const prefs = this.auth.user()?.preferences ?? EMPTY_PREFERENCES;
@@ -27,6 +36,16 @@ export class AccountPlaces implements OnInit {
       ...EMPTY_PLACE,
       ...(prefs.places?.[index] ?? {}),
     }));
+    if (this.usingDefaults()) {
+      this.travel.defaultPlaces().subscribe({
+        next: (response) =>
+          this.defaultLabels.set(
+            (response.places ?? []).map((place) =>
+              [place.city, place.region, place.country].filter((part) => part).join(', '),
+            ),
+          ),
+      });
+    }
   }
 
   savePlaces(): void {

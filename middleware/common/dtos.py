@@ -117,6 +117,13 @@ class TravelState(TypedDict, total=False):
     approved: bool
     traveler_feedback: str
     final_response: str
+    proposed_action: dict[str, Any]
+
+    current_step: str
+    step_count: int
+    max_steps: int
+    error_count: int
+    last_error: dict[str, Any] | None
 
     llm_calls: int
     llm_provider: str
@@ -184,6 +191,10 @@ DELETE_TRAVEL_PLAN_PHRASE = "delete this travel plan"
 
 class DeleteTravelRequest(BaseModel):
     confirmation: str = ""
+
+
+class SaveTravelRequest(BaseModel):
+    thread_id: str = Field(min_length=1)
 
 
 class PreferenceSkillSections(BaseModel):

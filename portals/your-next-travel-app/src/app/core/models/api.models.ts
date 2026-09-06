@@ -54,7 +54,14 @@ export interface AreaEvent {
   blurb: string;
 }
 
-export interface JournalHappeningsResponse {
+export interface PipelinePlacesMeta {
+  places?: string[];
+  places_source?: 'user' | 'system_default' | string;
+  cached?: boolean;
+  needs_model?: boolean;
+}
+
+export interface JournalHappeningsResponse extends PipelinePlacesMeta {
   success: boolean;
   message?: string;
   expanded?: boolean;
@@ -62,7 +69,6 @@ export interface JournalHappeningsResponse {
   month?: number;
   window?: string;
   radius_miles?: number;
-  places?: string[];
   skill_names?: string[];
   lens?: string;
   classify_note?: string;
@@ -72,14 +78,42 @@ export interface JournalHappeningsResponse {
   ideas?: string;
 }
 
-export interface AreaEventsResponse {
+export interface AreaEventsResponse extends PipelinePlacesMeta {
   success: boolean;
   message?: string;
   horizon?: string;
   window?: string;
   radius_miles?: number;
-  places?: string[];
   events?: AreaEvent[];
+}
+
+export interface PlanDeskResponse extends PipelinePlacesMeta {
+  success: boolean;
+  message?: string;
+  headline?: string;
+  note?: string;
+  leftover?: string;
+  skill_names?: string[];
+}
+
+export interface PacksLensResponse extends PipelinePlacesMeta {
+  success: boolean;
+  message?: string;
+  note?: string;
+  skill_names?: string[];
+}
+
+export interface AccountDeskResponse extends PipelinePlacesMeta {
+  success: boolean;
+  message?: string;
+  note?: string;
+  place_count?: number;
+}
+
+export interface DefaultPlacesResponse {
+  success: boolean;
+  places: InterestPlace[];
+  places_source: 'system_default' | string;
 }
 
 export interface LlmModelOption {
@@ -121,6 +155,8 @@ export interface TravelResult {
   guardrail_reason?: string;
   llm_base_url?: string;
   llm_calls?: number;
+  cancelled?: boolean;
+  trip_constraints?: Record<string, string | string[] | undefined>;
 }
 
 export interface TravelResponse {

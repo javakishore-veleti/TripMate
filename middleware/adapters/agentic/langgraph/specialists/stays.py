@@ -1,6 +1,7 @@
 from langchain_core.messages import AIMessage
 
 from middleware.adapters.agentic.langgraph.llm_text import complete_text, destination_from_state
+from middleware.adapters.agentic.langgraph.runtime import brief_failure
 from middleware.common.dtos import TravelState
 from middleware.common.log import get_logger
 
@@ -37,9 +38,13 @@ Recommend 3 to 5 neighborhoods or stay types. Keep it under 220 words.
             "Stay search is unavailable right now. Use the destination and "
             "travel style to pick a neighborhood, and treat this as non-live advice."
         )
+        failure = brief_failure(state, "stay_research", exc)
+    else:
+        failure = {}
     logger.info("stay_research finished")
     return {
         "hotel_results": text,
         "messages": [AIMessage(content="Stay research added.")],
         "llm_calls": state.get("llm_calls", 0) + 1,
+        **failure,
     }

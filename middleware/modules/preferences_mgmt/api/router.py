@@ -3,10 +3,31 @@ from fastapi.responses import JSONResponse
 
 from middleware.common.dtos import PreferenceSkillRequest, PreferenceSkillSelectRequest
 from middleware.common.http_session import require_api_user
+from middleware.modules.shared.services.pipeline_context import is_model_config_error
+from middleware.modules.preferences_mgmt.facades.packs_lens_facade import PacksLensFacade
 from middleware.modules.preferences_mgmt.facades.preferences_facade import PreferencesFacade
 
 router = APIRouter(tags=["preferences-mgmt"])
 _prefs = PreferencesFacade()
+
+
+@router.post("/api/v1/preference-skills/lens")
+async def preference_packs_lens(request: Request):
+    user = require_api_user(request)
+    try:
+        result = PacksLensFacade().lookup(
+            user_id=user["id"],
+            preferences=user.get("preferences") or {},
+        )
+        return {"success": True, **result}
+    except ValueError as exc:
+        if is_model_config_error(exc):
+            return {"success": True, "needs_model": True}
+        return JSONResponse({"success": False, "message": str(exc)}, status_code=400)
+    except Exception as exc:
+        if is_model_config_error(exc):
+            return {"success": True, "needs_model": True}
+        return JSONResponse({"success": False, "message": str(exc)}, status_code=502)
 
 
 @router.get("/api/v1/preference-skills")

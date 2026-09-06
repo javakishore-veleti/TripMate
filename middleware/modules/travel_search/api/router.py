@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from middleware.common.dtos import AreaEventsRequest
 from middleware.common.http_session import require_api_user
 from middleware.common.llm_catalog import ui_catalog
+from middleware.modules.shared.services.pipeline_context import dashboard_catalog_fallback, is_model_config_error
 from middleware.modules.travel_search.facades.places_facade import PlacesFacade
 
 router = APIRouter(tags=["travel-search"])
@@ -12,6 +13,12 @@ router = APIRouter(tags=["travel-search"])
 @router.get("/api/v1/llm/catalog")
 async def llm_catalog(base_url: str | None = None):
     return ui_catalog(ollama_url=base_url)
+
+
+@router.get("/api/v1/places/defaults")
+async def default_places():
+    places = PlacesFacade().default_places()
+    return {"success": True, "places": places, "places_source": "system_default"}
 
 
 @router.post("/api/v1/area-events")
@@ -25,8 +32,18 @@ async def area_events(payload: AreaEventsRequest, request: Request):
         )
         return {"success": True, **result}
     except ValueError as exc:
+        if is_model_config_error(exc):
+            return {
+                "success": True,
+                **dashboard_catalog_fallback(user.get("preferences") or {}, payload.horizon),
+            }
         return JSONResponse({"success": False, "message": str(exc), "events": []}, status_code=400)
     except Exception as exc:
+        if is_model_config_error(exc):
+            return {
+                "success": True,
+                **dashboard_catalog_fallback(user.get("preferences") or {}, payload.horizon),
+            }
         return JSONResponse(
             {"success": False, "message": str(exc), "events": []},
             status_code=502,

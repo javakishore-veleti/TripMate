@@ -1,5 +1,6 @@
 import { Destination, DESTINATION_GROUPS } from '../../travel-search/destinations';
 import { TravelRequestRecord } from '../../../core/models/api.models';
+import { tripWindowLabel } from './trip-when';
 
 export interface TripStory {
   title: string;
@@ -154,7 +155,8 @@ export function tripStory(record: TravelRequestRecord): TripStory {
   const days = duration(prompt);
   const from = origin(prompt);
   const vibe = title === place.name ? place.vibe : '';
-  const bits = [days, from ? `from ${from}` : '', vibe].filter(Boolean);
+  const window = tripWindowLabel(record);
+  const bits = [window || days, from ? `from ${from}` : '', vibe].filter(Boolean);
   const { label, cta } = statusCopy(record.status);
   const href =
     record.status === 'awaiting_approval'

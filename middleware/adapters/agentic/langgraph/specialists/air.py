@@ -1,6 +1,7 @@
 from langchain_core.messages import AIMessage
 
 from middleware.adapters.agentic.langgraph.llm_text import complete_text, destination_from_state
+from middleware.adapters.agentic.langgraph.runtime import brief_failure
 from middleware.common.dtos import TravelState
 from middleware.common.log import get_logger
 
@@ -44,9 +45,13 @@ Keep it under 220 words and label figures as estimates.
     except Exception as exc:
         logger.exception("air_research failed: %s", exc)
         text = f"Air options are unavailable right now: {exc}"
+        failure = brief_failure(state, "air_research", exc)
+    else:
+        failure = {}
     logger.info("air_research finished")
     return {
         "flight_results": text,
         "messages": [AIMessage(content="Air research added.")],
         "llm_calls": state.get("llm_calls", 0) + 1,
+        **failure,
     }

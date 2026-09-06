@@ -9,8 +9,9 @@ from middleware.adapters.agentic.langgraph.dashboard.places_planner.tasks import
 )
 from middleware.common.constants.llm_providers import LLM_PROVIDER_GROQ, LLM_PROVIDER_OLLAMA
 from middleware.common.llm_catalog import ui_catalog
+from middleware.common.default_places import preferences_for_pipeline
 from middleware.common.log import get_logger
-from middleware.common.ollama_settings import ollama_base_url, ollama_default_model
+from middleware.common.ollama_settings import ollama_base_url, ollama_default_model, prefer_chat_model
 from middleware.common.user_preferences import format_place, normalize_preferences
 
 logger = get_logger(__name__)
@@ -100,10 +101,11 @@ def resolve_job_llm(
     ollama = next((item for item in catalog["providers"] if item["id"] == LLM_PROVIDER_OLLAMA), None)
     if provider == LLM_PROVIDER_OLLAMA:
         base_url = base_url or ollama_base_url()
+        live = [item.get("id") or "" for item in ((ollama or {}).get("models") or [])]
         model = (
             model
             or ollama_default_model()
-            or ((ollama or {}).get("models") or [{}])[0].get("id")
+            or prefer_chat_model(live)
             or ""
         )
         if not model:
@@ -144,9 +146,7 @@ def resolve_brief_jobs(
 
 
 def run_places_planner(user_id: str, preferences: dict, horizon: str) -> dict:
-    prefs = normalize_preferences(preferences)
-    if not prefs["places"]:
-        raise ValueError("Add up to five cities on your account first.")
+    prefs, _source = preferences_for_pipeline(preferences)
     jobs = resolve_brief_jobs(prefs)
     nearby = jobs["reason"]
     logger.info(

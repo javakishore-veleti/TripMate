@@ -14,6 +14,7 @@ import {
 import { TravelService } from '../../../core/services/travel.service';
 import { ApprovalPanel } from '../../approvals-mgmt/approval-panel/approval-panel';
 import { DeletePlan } from '../delete-plan/delete-plan';
+import { formatDateTime, plannedAt, tripWindowLabel } from '../dashboard/trip-when';
 import { renderMarkdown, travelAnswer } from '../plan/markdown';
 
 @Component({
@@ -57,6 +58,20 @@ export class RequestDetail implements OnInit {
 
   specialistName(name: string): string {
     return specialistLabel(name);
+  }
+
+  plannedLine(): string {
+    const record = this.record();
+    if (!record) {
+      return '';
+    }
+    const when = plannedAt(record);
+    return when ? formatDateTime(when) : '';
+  }
+
+  tripLine(): string {
+    const record = this.record();
+    return record ? tripWindowLabel(record) : '';
   }
 
   tokenLine(): string {

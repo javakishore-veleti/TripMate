@@ -3,11 +3,14 @@ import { Component, OnInit, computed, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 import { AreaEvent, InterestPlace, TravelRequestRecord } from '../../../core/models/api.models';
+import { ModelHintCopy, isModelConfigMessage, modelHintFor, needsModelHint } from '../../../core/models/model-hint';
 import { AuthService } from '../../../core/services/auth.service';
 import { TravelService } from '../../../core/services/travel.service';
 import { photoForPlace, tripStory } from '../dashboard/trip-story';
+import { calendarKey, tripDates } from '../dashboard/trip-when';
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const HAPPEN_PAGE_SIZE = 5;
 
 export interface CalendarDay {
   key: string;
@@ -28,16 +31,16 @@ export class TripJournal implements OnInit {
   records = signal<TravelRequestRecord[]>([]);
   loading = signal(true);
   asking = signal(false);
-  expanding = signal(false);
   askError = signal('');
   events = signal<AreaEvent[]>([]);
-  pack = signal('');
-  food = signal('');
-  ideas = signal('');
   classifyNote = signal('');
   skillNames = signal<string[]>([]);
-  expanded = signal(false);
+  happenPage = signal(0);
   view = signal(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+  placesSource = signal('');
+  watchedPlaces = signal<string[]>([]);
+  cached = signal(false);
+  modelHint = signal<ModelHintCopy | null>(null);
 
   trips = computed(() => this.records().map((record) => ({ record, story: tripStory(record) })));
   places = computed<InterestPlace[]>(() => this.auth.user()?.preferences?.places ?? []);
@@ -59,20 +62,29 @@ export class TripJournal implements OnInit {
     const year = this.view().getFullYear();
     const month = this.view().getMonth();
     for (const item of this.trips()) {
-      const raw = item.record.updated_at || item.record.created_at;
-      if (!raw) {
-        continue;
-      }
-      const date = new Date(raw);
-      if (date.getFullYear() === year && date.getMonth() === month) {
-        const key = this.keyFor(date);
-        marks.set(key, (marks.get(key) || 0) + 1);
+      for (const date of tripDates(item.record)) {
+        if (date.getFullYear() === year && date.getMonth() === month) {
+          const key = calendarKey(date);
+          marks.set(key, (marks.get(key) || 0) + 1);
+        }
       }
     }
     return marks;
   });
   days = computed<CalendarDay[]>(() => this.buildDays());
-  selectedEvents = computed(() => this.events().slice(0, this.expanded() ? 12 : 5));
+  happenPageCount = computed(() => Math.max(1, Math.ceil(this.events().length / HAPPEN_PAGE_SIZE)));
+  selectedEvents = computed(() => {
+    const start = this.happenPage() * HAPPEN_PAGE_SIZE;
+    return this.events().slice(start, start + HAPPEN_PAGE_SIZE);
+  });
+  canHappenPrev = computed(() => this.happenPage() > 0);
+  canHappenNext = computed(() => this.happenPage() < this.happenPageCount() - 1);
+  usingDefaults = computed(() => this.placesSource() === 'system_default');
+  placeNotice = computed(() =>
+    this.usingDefaults()
+      ? `Showing built-in default places: ${this.watchedPlaces().join(' · ')}.`
+      : '',
+  );
 
   constructor(
     readonly auth: AuthService,
@@ -88,21 +100,22 @@ export class TripJournal implements OnInit {
       },
       error: () => this.loading.set(false),
     });
-    this.loadHappenings(false);
+    this.loadHappenings();
   }
 
   shiftMonth(delta: number): void {
     const current = this.view();
     this.view.set(new Date(current.getFullYear(), current.getMonth() + delta, 1));
-    this.expanded.set(false);
-    this.pack.set('');
-    this.food.set('');
-    this.ideas.set('');
-    this.loadHappenings(false);
+    this.happenPage.set(0);
+    this.loadHappenings();
   }
 
-  seeMore(): void {
-    this.loadHappenings(true);
+  shiftHappenings(delta: number): void {
+    const next = this.happenPage() + delta;
+    if (next < 0 || next >= this.happenPageCount()) {
+      return;
+    }
+    this.happenPage.set(next);
   }
 
   photoFor(event: AreaEvent): string {
@@ -113,6 +126,17 @@ export class TripJournal implements OnInit {
     return [event.city, event.region, event.country].filter((part) => part).join(', ') || event.near;
   }
 
+  private customerNote(raw: string): string {
+    const text = raw.replace(/\s+/g, ' ').trim();
+    if (
+      !text ||
+      /one short sentence|what to look for|return json|look for this month/i.test(text)
+    ) {
+      return 'Go find a spark near your cities.';
+    }
+    return text;
+  }
+
   planEvent(event: AreaEvent): void {
     const where = this.eventWhere(event);
     const prompt = `Plan a trip around ${event.name}${where ? ` in ${where}` : ''}. ${event.blurb} Keep it within about ${this.radius()} miles of ${event.near || 'my saved places'}.`;
@@ -120,45 +144,43 @@ export class TripJournal implements OnInit {
     void this.router.navigateByUrl('/plan');
   }
 
-  private loadHappenings(expand: boolean): void {
-    if (!this.places().length) {
-      this.askError.set('Add cities on your account first.');
-      this.events.set([]);
-      return;
-    }
-    if (expand) {
-      this.expanding.set(true);
-    } else {
-      this.asking.set(true);
-    }
+  private loadHappenings(): void {
+    this.asking.set(true);
     this.askError.set('');
+    this.modelHint.set(null);
     const view = this.view();
     this.travel
       .journalHappenings({
-        expand,
         year: view.getFullYear(),
         month: view.getMonth() + 1,
       })
       .subscribe({
         next: (response) => {
           this.asking.set(false);
-          this.expanding.set(false);
           this.events.set(response.events ?? []);
-          this.classifyNote.set(response.classify_note || '');
+          this.happenPage.set(0);
+          this.classifyNote.set(this.customerNote(response.classify_note || ''));
           this.skillNames.set(response.skill_names ?? []);
-          this.pack.set(response.pack || '');
-          this.food.set(response.food || '');
-          this.ideas.set(response.ideas || '');
-          this.expanded.set(Boolean(response.expanded));
+          this.placesSource.set(response.places_source || '');
+          this.watchedPlaces.set(response.places ?? []);
+          this.cached.set(Boolean(response.cached));
+          if (needsModelHint(response)) {
+            this.modelHint.set(modelHintFor('journal'));
+            return;
+          }
           if (!response.success) {
             this.askError.set(response.message || 'Could not load what is happening.');
           }
         },
         error: (err: HttpErrorResponse) => {
           this.asking.set(false);
-          this.expanding.set(false);
           this.events.set([]);
-          this.askError.set(err.error?.message || 'Could not load what is happening.');
+          const message = err.error?.message || '';
+          if (isModelConfigMessage(message)) {
+            this.modelHint.set(modelHintFor('journal'));
+            return;
+          }
+          this.askError.set(message || 'Could not load what is happening.');
         },
       });
   }

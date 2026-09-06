@@ -2,8 +2,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { PreferenceSkillSummary } from '../../../core/models/api.models';
+import { PacksLensResponse, PreferenceSkillSummary } from '../../../core/models/api.models';
+import { ModelHintCopy, isModelConfigMessage, modelHintFor, needsModelHint } from '../../../core/models/model-hint';
 import { PreferenceSkillsService } from '../../../core/services/preference-skills.service';
+import { TravelService } from '../../../core/services/travel.service';
 
 @Component({
   selector: 'app-preferences',
@@ -16,11 +18,29 @@ export class Preferences implements OnInit {
   loading = signal(true);
   error = signal('');
   saved = signal('');
+  lens = signal<PacksLensResponse | null>(null);
+  modelHint = signal<ModelHintCopy | null>(null);
 
-  constructor(private readonly skillsApi: PreferenceSkillsService) {}
+  constructor(
+    private readonly skillsApi: PreferenceSkillsService,
+    private readonly travel: TravelService,
+  ) {}
 
   ngOnInit(): void {
     this.reload();
+    this.travel.packsLens().subscribe({
+      next: (response) => {
+        this.lens.set(response);
+        if (needsModelHint(response)) {
+          this.modelHint.set(modelHintFor('preferences'));
+        }
+      },
+      error: (err: HttpErrorResponse) => {
+        if (isModelConfigMessage(err.error?.message)) {
+          this.modelHint.set(modelHintFor('preferences'));
+        }
+      },
+    });
   }
 
   selectedCount(): number {

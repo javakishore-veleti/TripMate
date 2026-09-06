@@ -15,11 +15,17 @@
         </div>
         <nav class="site-footer-nav" aria-label="Footer">
           <a routerLink="/">Explore</a>
-          <a routerLink="/plan">Plan a trip</a>
-          <a routerLink="/dashboard">Dashboard</a>
-          <a routerLink="/trip-journal">Trip journal</a>
           <a routerLink="/privacy">Privacy</a>
-          <a routerLink="/signin">Sign in</a>
+          @if (auth.signedIn()) {
+            <a routerLink="/dashboard">Dashboard</a>
+            <a routerLink="/trip-journal">My Trips Journal</a>
+            <a routerLink="/plan">Plan a trip</a>
+            <a routerLink="/preferences">Preferences</a>
+            <a routerLink="/account">Account</a>
+          } @else {
+            <a routerLink="/signin">Sign in</a>
+            <a routerLink="/signup">Create a free account</a>
+          }
         </nav>
       </div>
       <div class="site-footer-legal">

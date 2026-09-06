@@ -3,6 +3,20 @@
   <p>
     Your email and latest sign-in, as they stand now. These are not edited here.
   </p>
+  @if (desk()?.places_source === 'system_default') {
+    <p class="side-note">
+      Menus use built-in default places until you save cities:
+      {{ (desk()?.places ?? []).join(' · ') }}.
+    </p>
+  }
+  @if (desk()?.note) {
+    <p class="side-note">{{ desk()?.note }}</p>
+  }
+  @if (modelHint(); as hint) {
+    <p class="side-note">
+      {{ hint.before }}<a routerLink="/account/models">{{ hint.link }}</a>{{ hint.after }}
+    </p>
+  }
   <form class="place-form journal-pad" (submit)="$event.preventDefault()">
     <label class="radius-field">
       Email
