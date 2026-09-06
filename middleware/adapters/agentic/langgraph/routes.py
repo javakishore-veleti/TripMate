@@ -1,6 +1,6 @@
 from langgraph.graph import END
 
-from middleware.modules.plans_mgmt.tasks.specialists.ids import (
+from middleware.adapters.agentic.langgraph.specialists.ids import (
     AIR_RESEARCH,
     CLIMATE_BRIEF,
     COORDINATOR,

@@ -1,4 +1,4 @@
-from middleware.modules.plans_mgmt.workflows.happenings.roles import complete_role
+from middleware.adapters.agentic.langgraph.journal.happenings.roles import complete_role
 from middleware.common.log import get_logger
 
 logger = get_logger(__name__)

@@ -4,7 +4,7 @@ from langgraph.types import Command
 from overrides import override
 
 from middleware.adapters.agentic.interfaces import AgenticFrameworkAdapter
-from middleware.modules.travel_search.workflows.places_planner.main import resolve_brief_jobs
+from middleware.adapters.agentic.langgraph.dashboard.places_planner.main import resolve_brief_jobs
 from middleware.adapters.agentic.langgraph.llm_text import empty_constraints
 from middleware.adapters.agentic.langgraph.routes import (
     ROUTE_MAP,
@@ -12,7 +12,7 @@ from middleware.adapters.agentic.langgraph.routes import (
     route_after_specialist,
     route_from_coordinator,
 )
-from middleware.modules.plans_mgmt.tasks.specialists import (
+from middleware.adapters.agentic.langgraph.specialists import (
     air_research,
     climate_brief,
     coordinator,
@@ -24,7 +24,7 @@ from middleware.modules.plans_mgmt.tasks.specialists import (
     traveler_review,
     trip_draft,
 )
-from middleware.modules.plans_mgmt.tasks.specialists.ids import (
+from middleware.adapters.agentic.langgraph.specialists.ids import (
     AIR_RESEARCH,
     CLIMATE_BRIEF,
     COORDINATOR,

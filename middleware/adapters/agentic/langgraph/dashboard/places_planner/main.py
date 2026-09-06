@@ -2,7 +2,7 @@ from typing import TypedDict
 
 from langgraph.graph import END, START, StateGraph
 
-from middleware.modules.travel_search.workflows.places_planner.tasks import (
+from middleware.adapters.agentic.langgraph.dashboard.places_planner.tasks import (
     this_month_task,
     this_quarter_task,
     this_week_task,

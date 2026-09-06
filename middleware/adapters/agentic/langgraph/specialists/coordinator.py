@@ -6,7 +6,7 @@ from middleware.adapters.agentic.langgraph.llm_text import (
     empty_constraints,
     json_from_llm,
 )
-from middleware.modules.plans_mgmt.tasks.specialists.ids import (
+from middleware.adapters.agentic.langgraph.specialists.ids import (
     AIR_RESEARCH,
     CLIMATE_BRIEF,
     COST_REVIEW,

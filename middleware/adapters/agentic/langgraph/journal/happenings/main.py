@@ -2,14 +2,14 @@ from typing import TypedDict
 
 from langgraph.graph import END, START, StateGraph
 
-from middleware.modules.travel_search.workflows.places_planner.main import resolve_brief_jobs
-from middleware.modules.plans_mgmt.workflows.happenings.tasks.briefs import (
+from middleware.adapters.agentic.langgraph.dashboard.places_planner.main import resolve_brief_jobs
+from middleware.adapters.agentic.langgraph.journal.happenings.tasks.briefs import (
     food_brief,
     ideas_brief,
     pack_brief,
 )
-from middleware.modules.plans_mgmt.workflows.happenings.tasks.classify import classify_traveler
-from middleware.modules.plans_mgmt.workflows.happenings.tasks.happenings import (
+from middleware.adapters.agentic.langgraph.journal.happenings.tasks.classify import classify_traveler
+from middleware.adapters.agentic.langgraph.journal.happenings.tasks.happenings import (
     collect_month_happenings,
 )
 from middleware.common.log import get_logger

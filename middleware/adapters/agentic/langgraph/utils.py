@@ -1,6 +1,6 @@
 from typing import Any, Iterable
 
-from middleware.modules.plans_mgmt.tasks.specialists.ids import TRAVELER_REVIEW
+from middleware.adapters.agentic.langgraph.specialists.ids import TRAVELER_REVIEW
 
 _STATUS_MESSAGES = {
     "Request accepted for trip planning.",

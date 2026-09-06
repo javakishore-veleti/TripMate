@@ -1,7 +1,7 @@
 from datetime import date
 
 from middleware.adapters.agentic.langgraph.llm_text import complete_text, json_from_llm
-from middleware.modules.travel_search.workflows.places_planner.windows import clean_event, window_for
+from middleware.adapters.agentic.langgraph.dashboard.places_planner.windows import clean_event, window_for
 from middleware.common.log import get_logger
 from middleware.common.user_preferences import format_place, normalize_preferences
 

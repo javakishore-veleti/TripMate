@@ -1,6 +1,6 @@
 from overrides import override
 
-from middleware.modules.plans_mgmt.workflows.happenings.main import run_journal_happenings
+from middleware.adapters.agentic.objects import AgenticAdapterObjectFactory
 from middleware.modules.shared.services.interfaces import JournalHappeningsService
 
 
@@ -14,7 +14,7 @@ class JournalHappeningsServiceImpl(JournalHappeningsService):
         year: int | None = None,
         month: int | None = None,
     ) -> dict:
-        return run_journal_happenings(
+        return AgenticAdapterObjectFactory.journal_happenings(
             user_id=user_id,
             preferences=preferences,
             expand=expand,
