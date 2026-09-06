@@ -31,8 +31,9 @@ Optional: `OLLAMA_BASE_URL` (default `http://127.0.0.1:11434`) for a local Ollam
 ## Table of contents
 
 - [Request flow](#request-flow)
-  - [1. User to app.py to the planner service](#1-user-to-apppy-to-the-planner-service)
+  - [1. User to the API to the planner service](#1-user-to-the-api-to-the-planner-service)
   - [2. Planner service to TravelRequestAgentImpl](#2-planner-service-to-travelrequestagentimpl)
+- [Where code lives](#where-code-lives)
 - [Understanding Python Frameworks](#understanding-python-frameworks)
   - [Uvicorn Usage](#uvicorn-usage)
     - [How Uvicorn integrates with FastAPI](#how-uvicorn-integrates-with-fastapi)
@@ -44,30 +45,29 @@ Optional: `OLLAMA_BASE_URL` (default `http://127.0.0.1:11434`) for a local Ollam
 
 ## Request flow
 
-What runs **today**. The UI sends `agentic_adapter` (default `langgraph`). The planner graph routes the request, calls the selected specialists, and returns a draft for review. More diagrams are in [Docs/Design/TravelReqAgentImpl.md](Docs/Design/TravelReqAgentImpl.md).
+What runs **today**. The UI sends `agentic_adapter` (default `langgraph`). The API lives under `middleware/`. Each feature module owns its api, facade, service, and DAOs. LangGraph and LLM providers stay in `middleware/adapters/` so the same module can later use Google ADK. More diagrams are in [Docs/Design/TravelReqAgentImpl.md](Docs/Design/TravelReqAgentImpl.md).
 
-### 1. User to app.py to the planner service
+### 1. User to the API to the planner service
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor User
     participant UI as Browser UI
-    participant App as app.py
-    participant Factory as ServicesObjectFactory
+    participant API as plans_mgmt api
+    participant Facade as PlannerFacade
     participant Svc as TravelPlannerService
 
     User->>UI: Type prompt, Generate Draft
-    UI->>App: POST /api/v1/travel/planner
-    Note over UI,App: TravelRequest(message, thread_id, agentic_adapter)
-    App->>App: resolve_thread_id
-    App->>App: TravelReqCtx(thread_id)
-    App->>Factory: get_service(SERVICE_TRAVEL_PLANNER)
-    Factory-->>App: TravelPlannerServiceImpl
-    App->>Svc: execute(request, ctx)
-    Svc-->>App: ResponseCode
-    App->>App: result.prompt = ctx.user_message
-    App-->>UI: TravelResponse
+    UI->>API: POST /api/v1/travel/planner
+    Note over UI,API: TravelRequest(message, thread_id, agentic_adapter)
+    API->>API: resolve_thread_id, TravelReqCtx
+    API->>Facade: execute(request, ctx)
+    Facade->>Svc: execute(request, ctx)
+    Svc-->>Facade: ResponseCode
+    Facade-->>API: ResponseCode
+    API->>API: result.prompt = ctx.user_message
+    API-->>UI: TravelResponse
     UI-->>User: Draft plan for review
 ```
 
@@ -95,13 +95,28 @@ sequenceDiagram
 
 More diagrams (coordinator, LLM provider): [Docs/Design/TravelReqAgentImpl.md](Docs/Design/TravelReqAgentImpl.md).
 
+## Where code lives
+
+| Layer | Path | Role |
+| --- | --- | --- |
+| UI | `portals/your-next-travel-app` | Angular portal |
+| API entry | `middleware/app.py`, `middleware/api/factory.py` | Uvicorn target; mounts module routers |
+| Feature module | `middleware/modules/<feature>/` | `api/`, facades, services, `persistence/` (entities + DAOs) |
+| Shared factories | `middleware/modules/shared/` | `ServicesObjectFactory`, `DaoObjectFactory` |
+| Platform DB | `middleware/persistence/` | Alembic, engine, `Base`, checkpointer |
+| Agentic adapters | `middleware/adapters/agentic/` | `TripComposeAdapter` (LangGraph); ADK would register here |
+| LLM providers | `middleware/adapters/llm_providers/` | Ollama, Groq |
+| Local data | `runtime-data/local-deploy/` | SQLite and preference packs (not in git) |
+
+Call sequence: API → facade → service → DAO and/or adapter factory → LangGraph (or later ADK) → LLM provider.
+
 ## Understanding Python Frameworks
 
 FastAPI is the **application** (routes, validation, responses). Uvicorn is the **server** that listens on a host and port and calls that application. They meet through **ASGI**, a standard interface in Python web stacks.
 
 ### Uvicorn Usage
 
-Your Next Travel starts the API from `app.py` with configurable host and port (defaults: `0.0.0.0` and `8000`):
+Your Next Travel starts the API from `middleware/app.py` with configurable host and port (defaults: `0.0.0.0` and `8000`):
 
 ```bash
 python -m middleware.app
@@ -131,11 +146,11 @@ Uvicorn and FastAPI are two layers.
 
 Uvicorn does not scan the project for FastAPI classes. You point it at **one object** with an import path.
 
-In `app.py` that argument is `"middleware.app:app"`:
+In `middleware/app.py` that argument is `"middleware.app:app"`:
 
 | Part | Meaning in this repo |
 | --- | --- |
-| Left `app` | The **module** `app.py` |
+| Left `middleware.app` | The **module** `middleware/app.py` |
 | Right `app` | The **variable** `app = FastAPI(...)` in that module |
 
 Uvicorn does the equivalent of:
@@ -143,15 +158,15 @@ Uvicorn does the equivalent of:
 ```python
 import importlib
 
-module = importlib.import_module("app")  # loads app.py
-asgi_app = getattr(module, "app")        # the FastAPI() instance
+module = importlib.import_module("middleware.app")  # loads middleware/app.py
+asgi_app = getattr(module, "app")                   # the FastAPI() instance
 ```
 
 Then it only talks to that object. Other classes (`TravelPlannerService`, templates, and so on) are used only because your route functions call them.
 
 With `reload=True`, a parent process watches files. A **child** process imports `"middleware.app:app"` again after a change. That is why reload needs the string. Passing the in-memory `app` object works without reload, but the reloader cannot re-import it.
 
-If you renamed the instance (for example `api = FastAPI(...)`), you would pass `"app:api"`. If that path is missing or the object is not ASGI-callable, Uvicorn fails — it will not guess another object. The left side stays `app` because that is the **file/module** name, not the variable name.
+If you renamed the instance (for example `api = FastAPI(...)`), you would pass `"middleware.app:api"`. If that path is missing or the object is not ASGI-callable, Uvicorn fails — it will not guess another object. The left side stays `middleware.app` because that is the **module** name, not the variable name.
 
 #### What ASGI stands for and why it matters
 

@@ -6,31 +6,30 @@ A Generate Draft click is three hops: **browser to the planner service**, **serv
 
 Today `TravelRequestAgentImpl` copies `request.message` onto `ctx.user_message`. The adapter factory in diagram 2 is the `execute` target.
 
-## 1. User to browser to `app.py` to the planner service
+## 1. User to browser to the API to the planner service
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor User
     participant UI as Browser UI
-    participant App as app.py
-    participant Factory as ServicesObjectFactory
+    participant API as plans_mgmt api
+    participant Facade as PlannerFacade
     participant Svc as TravelPlannerService
 
     User->>UI: Type prompt, Generate Draft
-    UI->>App: POST /api/v1/travel/planner
-    Note over UI,App: TravelRequest(message, thread_id)
-    App->>App: resolve_thread_id
-    App->>App: TravelReqCtx(thread_id)
-    App->>Factory: get_service(SERVICE_TRAVEL_PLANNER)
-    Factory-->>App: TravelPlannerServiceImpl
-    App->>Svc: execute(request, ctx)
-    Svc-->>App: ResponseCode
-    App-->>UI: TravelResponse
+    UI->>API: POST /api/v1/travel/planner
+    Note over UI,API: TravelRequest(message, thread_id)
+    API->>API: resolve_thread_id, TravelReqCtx
+    API->>Facade: execute(request, ctx)
+    Facade->>Svc: execute(request, ctx)
+    Svc-->>Facade: ResponseCode
+    Facade-->>API: ResponseCode
+    API-->>UI: TravelResponse
     UI-->>User: prompt + plan panel
 ```
 
-`app.py` talks only to the `TravelPlannerService` interface. Approve is the same `execute` via `POST /api/v1/travel/approve`.
+The router in `middleware/modules/plans_mgmt/api/router.py` talks to `PlannerFacade`, which talks only to the `TravelPlannerService` interface. Approve is the same `execute` via `POST /api/v1/travel/approve`.
 
 ## 2. Planner service to adapter factory to specialists
 
@@ -63,7 +62,7 @@ sequenceDiagram
     Core-->>Svc: ResponseCode
 ```
 
-`TripComposeAdapter` is one `AgenticFrameworkAdapter`. A later ADK or Strands adapter would register on the same factory.
+`TripComposeAdapter` is one `AgenticFrameworkAdapter` in `middleware/adapters/agentic/langgraph/`. A later ADK or Strands adapter would register on the same factory. `plans_mgmt` does not import LangGraph.
 
 ## 3. Coordinator to the LLM provider
 
@@ -94,12 +93,20 @@ Unset `LLMRequest.provider` defaults to the catalog default (Ollama locally). `g
 
 ## Layers
 
-| Layer | Module | Role |
+| Layer | Path | Role |
 | --- | --- | --- |
 | UI | `portals/your-next-travel-app` | Angular portal: auth, dashboard, planner, preferences |
-| App | `app.py` | API only: auth, preferences, planner, approve, catalog |
-| Service | `core/services/interfaces.py`, `impl/planner_impl.py` | `TravelPlannerService.execute` |
-| Core agent | `core/agents/impl/travel_req_agent.py` | Normalize the user message; hand off to an adapter |
-| Agentic adapter | `adapters/agentic/objects.py`, `langgraph/trip_compose.py` | Factory → compiled trip compose graph |
-| Specialists | `adapters/agentic/langgraph/specialists/` | Intake, coordinator, research, traveler review, assemble |
-| LLM adapter | `adapters/llm_providers/` | `LLMProvider.complete` |
+| API entry | `middleware/app.py`, `middleware/api/factory.py` | Uvicorn target; mounts module routers |
+| Feature API | `middleware/modules/plans_mgmt/api/router.py` | Planner, approve, journal happenings |
+| Facade | `middleware/modules/plans_mgmt/facades/planner_facade.py` | Thin handoff to the service |
+| Service | `middleware/modules/plans_mgmt/services/planner_service.py` | Persist the trip; call the travel agent |
+| Shared factories | `middleware/modules/shared/` | `ServicesObjectFactory`, `DaoObjectFactory` |
+| DAO | `middleware/modules/plans_mgmt/persistence/` | Travel request table and DAO |
+| Platform DB | `middleware/persistence/` | Alembic, engine, `Base`, checkpointer |
+| Core agent | `middleware/core/agents/impl/travel_req_agent.py` | Normalize the user message; hand off to an adapter |
+| Agentic adapter | `middleware/adapters/agentic/objects.py`, `langgraph/trip_compose.py` | Factory → compiled trip compose graph |
+| Specialists | `middleware/adapters/agentic/langgraph/specialists/` | Intake, coordinator, research, traveler review, assemble |
+| LLM adapter | `middleware/adapters/llm_providers/` | `LLMProvider.complete` (Ollama, Groq) |
+| Local data | `runtime-data/local-deploy/` | SQLite and preference packs (not in git) |
+
+Call sequence: API → facade → service → DAO and/or adapter factory → LangGraph (or later ADK) → LLM provider.
